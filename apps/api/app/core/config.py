@@ -24,6 +24,7 @@ class Settings(BaseSettings):
         "write_content,write_script_tags,unauthenticated_read_product_listings"
     )
     shopify_webhook_secret: str = ""
+    shopify_billing_test_mode: bool = True
 
     do_ai_agent_base_url: str = ""
     do_ai_agent_key: str = ""

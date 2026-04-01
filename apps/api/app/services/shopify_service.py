@@ -109,6 +109,127 @@ class ShopifyService:
         }
         return await self._admin_graphql(shop_domain, admin_access_token, payload)
 
+    async def create_app_subscription(
+        self,
+        shop_domain: str,
+        admin_access_token: str,
+        *,
+        name: str,
+        price_amount: float,
+        currency_code: str,
+        return_url: str,
+        test: bool,
+    ) -> dict[str, Any]:
+        payload = {
+            "query": """
+            mutation AppSubscriptionCreate(
+              $name: String!
+              $lineItems: [AppSubscriptionLineItemInput!]!
+              $returnUrl: URL!
+              $test: Boolean
+            ) {
+              appSubscriptionCreate(name: $name, returnUrl: $returnUrl, lineItems: $lineItems, test: $test) {
+                userErrors {
+                  field
+                  message
+                }
+                confirmationUrl
+                appSubscription {
+                  id
+                  status
+                }
+              }
+            }
+            """,
+            "variables": {
+                "name": name,
+                "returnUrl": return_url,
+                "test": test,
+                "lineItems": [
+                    {
+                        "plan": {
+                            "appRecurringPricingDetails": {
+                                "price": {
+                                    "amount": price_amount,
+                                    "currencyCode": currency_code,
+                                },
+                                "interval": "EVERY_30_DAYS",
+                            }
+                        }
+                    }
+                ],
+            },
+        }
+        data = await self._admin_graphql(shop_domain, admin_access_token, payload)
+        result = data.get("data", {}).get("appSubscriptionCreate", {})
+        self._raise_user_errors(result.get("userErrors"))
+        return result
+
+    async def get_active_app_subscriptions(
+        self,
+        shop_domain: str,
+        admin_access_token: str,
+    ) -> list[dict[str, Any]]:
+        payload = {
+            "query": """
+            query CurrentAppInstallationSubscriptions {
+              currentAppInstallation {
+                activeSubscriptions {
+                  id
+                  name
+                  status
+                  test
+                  createdAt
+                  currentPeriodEnd
+                  lineItems {
+                    id
+                    plan {
+                      pricingDetails {
+                        __typename
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """,
+        }
+        data = await self._admin_graphql(shop_domain, admin_access_token, payload)
+        return data.get("data", {}).get("currentAppInstallation", {}).get("activeSubscriptions", [])
+
+    async def cancel_app_subscription(
+        self,
+        shop_domain: str,
+        admin_access_token: str,
+        *,
+        subscription_id: str,
+        prorate: bool = False,
+    ) -> dict[str, Any]:
+        payload = {
+            "query": """
+            mutation AppSubscriptionCancel($id: ID!, $prorate: Boolean) {
+              appSubscriptionCancel(id: $id, prorate: $prorate) {
+                userErrors {
+                  field
+                  message
+                }
+                appSubscription {
+                  id
+                  status
+                }
+              }
+            }
+            """,
+            "variables": {
+                "id": subscription_id,
+                "prorate": prorate,
+            },
+        }
+        data = await self._admin_graphql(shop_domain, admin_access_token, payload)
+        result = data.get("data", {}).get("appSubscriptionCancel", {})
+        self._raise_user_errors(result.get("userErrors"))
+        return result
+
     async def fetch_products(self, shop_domain: str, admin_access_token: str, limit: int = 50) -> list[dict[str, Any]]:
         query = {
             "query": """
@@ -323,3 +444,10 @@ class ShopifyService:
             )
             response.raise_for_status()
             return response.json()
+
+    def _raise_user_errors(self, user_errors: list[dict[str, Any]] | None) -> None:
+        if not user_errors:
+            return
+        messages = [error.get("message") for error in user_errors if error.get("message")]
+        if messages:
+            raise ValueError("; ".join(messages))

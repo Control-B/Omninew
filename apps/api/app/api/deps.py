@@ -29,7 +29,11 @@ def get_shopify_auth_service() -> ShopifyAuthService:
 
 
 def get_billing_service() -> BillingService:
-    return BillingService(get_supabase_gateway())
+    return BillingService(
+        get_supabase_gateway(),
+        get_tenant_service(),
+        get_shopify_service(),
+    )
 
 
 def get_product_sync_service() -> ProductSyncService:

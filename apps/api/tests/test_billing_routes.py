@@ -4,7 +4,13 @@ from fastapi.testclient import TestClient
 
 from app.api.deps import get_billing_service
 from app.main import app
-from app.schemas.common import BillingOverviewResponse, SubscriptionPlanResponse, TenantSubscriptionResponse, UsageMetricSummary
+from app.schemas.common import (
+    BillingOverviewResponse,
+    ShopifyBillingCheckoutResponse,
+    SubscriptionPlanResponse,
+    TenantSubscriptionResponse,
+    UsageMetricSummary,
+)
 
 
 class FakeBillingService:
@@ -62,6 +68,22 @@ class FakeBillingService:
             cancel_at_period_end=False,
         )
 
+    async def create_shopify_checkout(self, *, tenant_id, store_id=None, plan_code, return_path="/dashboard/connect"):
+        return ShopifyBillingCheckoutResponse(
+            tenant_id=tenant_id,
+            store_id=store_id,
+            plan_code=plan_code,
+            status="pending",
+            requires_confirmation=True,
+            confirmation_url="https://admin.shopify.com/confirm_charge",
+            redirect_url="https://admin.shopify.com/confirm_charge",
+            subscription_id="gid://shopify/AppSubscription/1",
+            test_mode=True,
+        )
+
+    async def complete_shopify_checkout(self, query_params):
+        return "https://omninew.example.com/dashboard/connect?billing=success&planCode=growth"
+
 
 def test_billing_plans_route() -> None:
     app.dependency_overrides[get_billing_service] = lambda: FakeBillingService()
@@ -107,3 +129,41 @@ def test_billing_plan_update_route() -> None:
     assert response.status_code == 200
     assert response.json()["plan_code"] == "growth"
     assert response.json()["status"] == "active"
+
+
+def test_shopify_billing_checkout_route() -> None:
+    fake_service = FakeBillingService()
+    app.dependency_overrides[get_billing_service] = lambda: fake_service
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/billing/shopify/checkout",
+        json={
+            "tenant_id": str(fake_service.tenant_id),
+            "store_id": str(fake_service.store_id),
+            "plan_code": "growth",
+            "return_path": "/dashboard/connect",
+        },
+    )
+
+    app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    assert response.json()["plan_code"] == "growth"
+    assert response.json()["requires_confirmation"] is True
+
+
+def test_shopify_billing_callback_route() -> None:
+    app.dependency_overrides[get_billing_service] = lambda: FakeBillingService()
+    client = TestClient(app)
+
+    response = client.get(
+        "/api/v1/billing/shopify/callback",
+        params={"shop": "acme.myshopify.com", "hmac": "valid"},
+        follow_redirects=False,
+    )
+
+    app.dependency_overrides.clear()
+
+    assert response.status_code == 302
+    assert "billing=success" in response.headers["location"]

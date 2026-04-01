@@ -25,8 +25,10 @@ Multi-tenant Shopify AI assistant built with a `Next.js` frontend in `apps/web` 
 
 - **Plans**: `starter`, `growth`, `scale`
 - **Billing API**: `GET /api/v1/billing/plans`, `GET /api/v1/billing`, `PUT /api/v1/billing/plan`
+- **Shopify checkout**: `POST /api/v1/billing/shopify/checkout`, then Shopify returns to `GET /api/v1/billing/shopify/callback`
 - **Metered usage**: `chat_messages`, `voice_sessions`, `sync_runs`
 - **Enforcement**: chat, voice, and store sync now check current plan limits before proceeding
+- **Test mode**: set `SHOPIFY_BILLING_TEST_MODE=true` for development stores and `false` in production
 
 ## Quick Validation
 

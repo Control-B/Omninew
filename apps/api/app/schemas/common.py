@@ -224,6 +224,8 @@ class TenantSubscriptionResponse(TimestampedResponse):
     current_period_start: datetime
     current_period_end: datetime | None = None
     cancel_at_period_end: bool = False
+    external_subscription_id: str | None = None
+    is_test: bool = False
 
 
 class UsageMetricSummary(BaseModel):
@@ -243,6 +245,25 @@ class BillingOverviewResponse(BaseModel):
 class BillingPlanUpdateRequest(BaseModel):
     tenant_id: UUID
     plan_code: str = Field(min_length=2, max_length=40)
+
+
+class ShopifyBillingCheckoutRequest(BaseModel):
+    tenant_id: UUID
+    store_id: UUID | None = None
+    plan_code: str = Field(min_length=2, max_length=40)
+    return_path: str = "/dashboard/connect"
+
+
+class ShopifyBillingCheckoutResponse(BaseModel):
+    tenant_id: UUID
+    store_id: UUID | None = None
+    plan_code: str
+    status: str
+    requires_confirmation: bool = True
+    confirmation_url: str | None = None
+    redirect_url: str
+    subscription_id: str | None = None
+    test_mode: bool = False
 
 
 class TranscriptRecord(BaseModel):

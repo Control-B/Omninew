@@ -94,6 +94,9 @@ services:
         scope: RUN_AND_BUILD_TIME
         type: SECRET
         value: ${SHOPIFY_WEBHOOK_SECRET}
+      - key: SHOPIFY_BILLING_TEST_MODE
+        scope: RUN_AND_BUILD_TIME
+        value: ${SHOPIFY_BILLING_TEST_MODE}
       - key: DO_AI_AGENT_BASE_URL
         scope: RUN_AND_BUILD_TIME
         value: ${DO_AI_AGENT_BASE_URL}
