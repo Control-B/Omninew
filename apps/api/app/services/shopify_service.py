@@ -27,7 +27,7 @@ class ShopifyService:
 
     async def get_store_info(self, shop_domain: str, admin_access_token: str) -> dict[str, Any]:
         query = {
-            "query": "{ shop { name email myshopifyDomain description } }",
+        "query": "{ shop { name email myshopifyDomain description currencyCode } }",
         }
         data = await self._admin_graphql(shop_domain, admin_access_token, query)
         return data.get("data", {}).get("shop", {})

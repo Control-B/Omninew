@@ -13,6 +13,7 @@ class DOAgentService:
     async def respond(
         self,
         *,
+        agent_id: str | None,
         merchant_instructions: str | None,
         tone: str,
         user_message: str,
@@ -25,6 +26,7 @@ class DOAgentService:
             store_context=context.get("store_context"),
         )
         return await self.provider.generate_response(
+            agent_id=agent_id,
             system_prompt=system_prompt,
             user_message=user_message,
             conversation_history=history,

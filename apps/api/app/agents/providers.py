@@ -13,6 +13,7 @@ class BaseTextAgentProvider(ABC):
     async def generate_response(
         self,
         *,
+        agent_id: str | None,
         system_prompt: str,
         user_message: str,
         conversation_history: list[dict[str, str]],
@@ -36,6 +37,7 @@ class DOTextAgentProvider(BaseTextAgentProvider):
     async def generate_response(
         self,
         *,
+        agent_id: str | None,
         system_prompt: str,
         user_message: str,
         conversation_history: list[dict[str, str]],
@@ -50,7 +52,7 @@ class DOTextAgentProvider(BaseTextAgentProvider):
             }
 
         payload = {
-            "agent_id": self.settings.do_ai_agent_id,
+            "agent_id": agent_id or self.settings.do_ai_agent_id,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 *conversation_history,

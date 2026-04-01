@@ -6,6 +6,7 @@ from app.services.livekit_service import LiveKitService
 from app.services.policy_sync_service import PolicySyncService
 from app.services.product_sync_service import ProductSyncService
 from app.services.shopify_service import ShopifyService
+from app.services.tenant_service import TenantService
 from app.services.transcript_service import TranscriptService
 
 
@@ -15,6 +16,10 @@ def get_text_agent_provider() -> BaseTextAgentProvider:
 
 def get_shopify_service() -> ShopifyService:
     return ShopifyService()
+
+
+def get_tenant_service() -> TenantService:
+    return TenantService(get_supabase_gateway(), get_shopify_service())
 
 
 def get_product_sync_service() -> ProductSyncService:
@@ -43,6 +48,7 @@ def get_conversation_service() -> ConversationService:
         text_agent_provider=get_text_agent_provider(),
         transcript_service=get_transcript_service(),
         lead_service=get_lead_service(),
+        tenant_service=get_tenant_service(),
     )
 
 
