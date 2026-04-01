@@ -1,6 +1,7 @@
 from app.agents.providers import BaseTextAgentProvider, DOTextAgentProvider
 from app.core.database import SupabaseGateway, get_supabase_gateway
 from app.services.conversation_service import ConversationService
+from app.services.agent_tool_service import AgentToolService
 from app.services.billing_service import BillingService
 from app.services.lead_service import LeadService
 from app.services.livekit_service import LiveKitService
@@ -54,6 +55,15 @@ def get_transcript_service() -> TranscriptService:
 
 def get_lead_service() -> LeadService:
     return LeadService(get_supabase_gateway())
+
+
+def get_agent_tool_service() -> AgentToolService:
+    return AgentToolService(
+        get_supabase_gateway(),
+        get_tenant_service(),
+        get_lead_service(),
+        get_shopify_service(),
+    )
 
 
 def get_conversation_service() -> ConversationService:

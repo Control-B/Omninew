@@ -266,6 +266,69 @@ class ShopifyBillingCheckoutResponse(BaseModel):
     test_mode: bool = False
 
 
+class AgentBlueprintRoute(BaseModel):
+    name: str
+    method: str
+    path: str
+    purpose: str
+    headers: dict[str, str] = Field(default_factory=dict)
+    body_schema: dict[str, Any] = Field(default_factory=dict)
+
+
+class AgentBlueprintResponse(BaseModel):
+    model: str
+    workspace_strategy: str
+    knowledge_base_strategy: list[str] = Field(default_factory=list)
+    guardrails: list[str] = Field(default_factory=list)
+    system_prompt: str
+    agent_routes: list[AgentBlueprintRoute] = Field(default_factory=list)
+    function_routes: list[AgentBlueprintRoute] = Field(default_factory=list)
+    env_requirements: list[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
+
+class AgentToolProductSearchRequest(BaseModel):
+    tenant_id: UUID | None = None
+    store_id: UUID | None = None
+    widget_key: str | None = None
+    query: str = Field(min_length=2)
+    limit: int = Field(default=6, ge=1, le=12)
+
+
+class AgentToolPolicyLookupRequest(BaseModel):
+    tenant_id: UUID | None = None
+    store_id: UUID | None = None
+    widget_key: str | None = None
+    policy_type: Literal["privacy", "refund", "shipping", "terms"] | None = None
+
+
+class AgentToolLeadCaptureRequest(BaseModel):
+    tenant_id: UUID | None = None
+    store_id: UUID | None = None
+    widget_key: str | None = None
+    session_id: UUID | None = None
+    name: str | None = None
+    email: EmailStr | None = None
+    phone: str | None = None
+    intent: str = "buying_intent_detected"
+    product_interest: str | None = None
+    notes: str | None = None
+
+
+class AgentToolHandoffRequest(BaseModel):
+    tenant_id: UUID | None = None
+    store_id: UUID | None = None
+    widget_key: str | None = None
+    customer_email: EmailStr | None = None
+    message: str = Field(min_length=3)
+    session_id: UUID | None = None
+
+
+class AgentToolResponse(BaseModel):
+    ok: bool = True
+    data: dict[str, Any] = Field(default_factory=dict)
+
+
 class TranscriptRecord(BaseModel):
     tenant_id: UUID
     session_id: UUID

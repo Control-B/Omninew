@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     do_ai_agent_base_url: str = ""
     do_ai_agent_key: str = ""
     do_ai_agent_id: str = ""
+    do_agent_route_secret: str = ""
 
     livekit_api_key: str = ""
     livekit_api_secret: str = ""
