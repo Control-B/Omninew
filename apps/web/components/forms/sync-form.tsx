@@ -4,12 +4,10 @@ import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { syncShopifyStore } from "@/lib/api";
+import { getMerchantContext } from "@/lib/tenant-context";
 
 export function SyncForm() {
-  const [shopDomain, setShopDomain] = useState("");
-  const [adminToken, setAdminToken] = useState("");
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
@@ -18,10 +16,17 @@ export function SyncForm() {
     setLoading(true);
     setStatus("");
 
+    const context = getMerchantContext();
+    if (!context) {
+      setStatus("Create a tenant on the Connect Store page first.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await syncShopifyStore({
-        shop_domain: shopDomain,
-        admin_access_token: adminToken,
+        tenant_id: context.tenantId,
+        store_id: context.storeId,
       });
       setStatus(
         `Synced ${response.products_synced ?? 0} products, ${response.collections_synced ?? 0} collections, ${response.policies_synced ?? 0} policies.`,
@@ -36,24 +41,8 @@ export function SyncForm() {
   return (
     <Card>
       <form className="space-y-4" onSubmit={onSubmit}>
-        <div>
-          <label className="mb-2 block text-sm text-slate-300">Shop domain</label>
-          <Input
-            placeholder="your-store.myshopify.com"
-            value={shopDomain}
-            onChange={(event) => setShopDomain(event.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label className="mb-2 block text-sm text-slate-300">Admin API token</label>
-          <Input
-            placeholder="shpat_..."
-            value={adminToken}
-            onChange={(event) => setAdminToken(event.target.value)}
-            required
-            type="password"
-          />
+        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4 text-sm text-slate-300">
+          Sync uses the Shopify credentials already stored during merchant onboarding.
         </div>
         <div className="flex items-center gap-3">
           <Button disabled={loading} type="submit">

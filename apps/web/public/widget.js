@@ -1,10 +1,7 @@
 (() => {
   const config = window.OmniNewWidget || {};
   const appUrl = (config.appUrl || window.location.origin || "").replace(/\/$/, "");
-  const tenantId = encodeURIComponent(config.tenantId || "");
-  const storeId = encodeURIComponent(config.storeId || "");
-  const apiBaseUrl = encodeURIComponent(config.apiBaseUrl || "");
-  const livekitWsUrl = encodeURIComponent(config.livekitWsUrl || "");
+  const widgetKey = encodeURIComponent(config.widgetKey || "");
 
   const existing = document.getElementById("omninew-widget-frame");
   if (existing || !appUrl) {
@@ -14,7 +11,7 @@
   const iframe = document.createElement("iframe");
   iframe.id = "omninew-widget-frame";
   iframe.title = "OmniNew AI Assistant";
-  iframe.src = `${appUrl}/embed/widget?tenantId=${tenantId}&storeId=${storeId}&apiBaseUrl=${apiBaseUrl}&livekitWsUrl=${livekitWsUrl}`;
+  iframe.src = `${appUrl}/embed/widget?widgetKey=${widgetKey}`;
   iframe.style.position = "fixed";
   iframe.style.right = "0";
   iframe.style.bottom = "0";

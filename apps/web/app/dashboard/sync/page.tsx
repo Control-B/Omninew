@@ -8,7 +8,7 @@ export default function SyncPage() {
         <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Product sync</div>
         <h1 className="mt-2 text-3xl font-semibold text-white">Sync products, collections, and policies</h1>
         <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300">
-          This surface triggers the FastAPI orchestration layer to pull Shopify catalog data into Supabase for recommendations and support answers.
+          This surface triggers the FastAPI orchestration layer to pull Shopify catalog data into Supabase for tenant-specific recommendations, grounded policy answers, and storefront assistant context.
         </p>
       </div>
       <SyncForm />

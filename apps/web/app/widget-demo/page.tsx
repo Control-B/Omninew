@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { ChatWidget } from "@/components/widget/chat-widget";
 import { Card } from "@/components/ui/card";
 import { embedSnippet } from "./embed-snippet";
@@ -23,7 +25,9 @@ export default function WidgetDemoPage() {
             Imagine this as the merchant’s product detail or collection page. The widget stays lightweight, nudges toward relevant bundles, answers policy questions, and can escalate into voice.
           </p>
         </div>
-        <ChatWidget />
+        <Suspense fallback={null}>
+          <ChatWidget />
+        </Suspense>
       </div>
     </main>
   );

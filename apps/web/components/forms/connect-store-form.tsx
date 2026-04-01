@@ -5,15 +5,29 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { connectShopifyStore } from "@/lib/api";
+import { Textarea } from "@/components/ui/textarea";
+import { bootstrapTenant } from "@/lib/api";
+import { setMerchantContext } from "@/lib/tenant-context";
+import type { MerchantContext } from "@/lib/types";
 
 export function ConnectStoreForm() {
+  const [businessName, setBusinessName] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
+  const [assistantName, setAssistantName] = useState("OmniNew assistant");
   const [shopDomain, setShopDomain] = useState("");
   const [adminToken, setAdminToken] = useState("");
   const [storefrontToken, setStorefrontToken] = useState("");
+  const [welcomeMessage, setWelcomeMessage] = useState(
+    "Hi! I can recommend products, answer policy questions, and help capture leads for premium items.",
+  );
   const [loading, setLoading] = useState(false);
+  const [merchantContext, setSavedMerchantContext] = useState<MerchantContext | null>(null);
   const [result, setResult] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  const embedSnippet = merchantContext
+    ? `<script>\n  window.OmniNewWidget = {\n    appUrl: "${typeof window !== "undefined" ? window.location.origin : "https://your-app.example.com"}",\n    widgetKey: "${merchantContext.widgetKey}"\n  };\n</script>\n<script src="${typeof window !== "undefined" ? window.location.origin : "https://your-app.example.com"}/widget.js" async></script>`
+    : "";
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -22,12 +36,31 @@ export function ConnectStoreForm() {
     setError("");
 
     try {
-      const response = await connectShopifyStore({
+      const response = await bootstrapTenant({
+        business_name: businessName,
+        owner_email: ownerEmail,
         shop_domain: shopDomain,
         admin_access_token: adminToken,
         storefront_access_token: storefrontToken || undefined,
+        assistant_name: assistantName,
+        tone: "balanced",
+        welcome_message: welcomeMessage,
+        voice_enabled: true,
       });
-      setResult(`Connected ${response.store_info?.name ?? shopDomain} successfully.`);
+      const context: MerchantContext = {
+        tenantId: response.tenant_id,
+        storeId: response.store_id,
+        widgetKey: response.widget_key,
+        businessName: response.business_name,
+        shopDomain: response.shop_domain,
+        storeName: response.store_name,
+        assistantName: response.assistant_name,
+        tone: response.tone,
+        welcomeMessage: response.welcome_message,
+      };
+      setMerchantContext(context);
+      setSavedMerchantContext(context);
+      setResult(`Created SaaS tenant for ${response.store_name ?? response.shop_domain}. Widget key issued successfully.`);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Connection failed.");
     } finally {
@@ -38,6 +71,18 @@ export function ConnectStoreForm() {
   return (
     <Card>
       <form className="space-y-4" onSubmit={onSubmit}>
+        <div>
+          <label className="mb-2 block text-sm text-slate-300">Business name</label>
+          <Input placeholder="Acme Wellness" value={businessName} onChange={(event) => setBusinessName(event.target.value)} required />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm text-slate-300">Owner email</label>
+          <Input placeholder="owner@acme.com" type="email" value={ownerEmail} onChange={(event) => setOwnerEmail(event.target.value)} required />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm text-slate-300">Assistant name</label>
+          <Input placeholder="Acme concierge" value={assistantName} onChange={(event) => setAssistantName(event.target.value)} required />
+        </div>
         <div>
           <label className="mb-2 block text-sm text-slate-300">Shop domain</label>
           <Input
@@ -66,14 +111,33 @@ export function ConnectStoreForm() {
             type="password"
           />
         </div>
+        <div>
+          <label className="mb-2 block text-sm text-slate-300">Welcome message</label>
+          <Textarea value={welcomeMessage} onChange={(event) => setWelcomeMessage(event.target.value)} />
+        </div>
         <div className="flex items-center gap-3">
           <Button disabled={loading} type="submit">
-            {loading ? "Connecting..." : "Connect store"}
+            {loading ? "Creating SaaS tenant..." : "Create tenant + connect store"}
           </Button>
           {result ? <span className="text-sm text-green-300">{result}</span> : null}
           {error ? <span className="text-sm text-rose-300">{error}</span> : null}
         </div>
       </form>
+
+      {merchantContext ? (
+        <div className="mt-6 space-y-4 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+          <div>
+            <div className="text-sm font-medium text-white">Tenant ready</div>
+            <div className="mt-1 text-sm text-slate-400">
+              Widget key: <span className="font-mono text-slate-200">{merchantContext.widgetKey}</span>
+            </div>
+          </div>
+          <div>
+            <div className="mb-2 text-sm text-slate-300">Embed snippet</div>
+            <Textarea readOnly value={embedSnippet} className="min-h-40 font-mono text-xs" />
+          </div>
+        </div>
+      ) : null}
     </Card>
   );
 }

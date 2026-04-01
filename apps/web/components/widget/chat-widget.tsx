@@ -1,14 +1,15 @@
 "use client";
 
 import { Mic, Send, Sparkles, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { sendChatMessage } from "@/lib/api";
+import { getWidgetPublicConfig, sendChatMessage } from "@/lib/api";
 import { sampleSuggestions } from "@/lib/data";
-import type { ChatMessage, ProductSuggestion } from "@/lib/types";
+import type { ChatMessage, ProductSuggestion, PublicWidgetConfig } from "@/lib/types";
 
 import { MessageBubble } from "./message-bubble";
 import { ProductSuggestionCard } from "./product-suggestion-card";
@@ -57,6 +58,8 @@ function fallbackReply(message: string) {
 }
 
 export function ChatWidget() {
+  const searchParams = useSearchParams();
+  const widgetKey = searchParams.get("widgetKey");
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [input, setInput] = useState("");
@@ -65,6 +68,33 @@ export function ChatWidget() {
   const [suggestions, setSuggestions] = useState<ProductSuggestion[]>(sampleSuggestions);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [voiceConnected] = useState(false);
+  const [widgetConfig, setWidgetConfig] = useState<PublicWidgetConfig | null>(null);
+
+  useEffect(() => {
+    async function loadWidgetConfig() {
+      if (!widgetKey) {
+        return;
+      }
+
+      try {
+        const config = await getWidgetPublicConfig(widgetKey);
+        setWidgetConfig(config);
+        setVoiceEnabled(config.voice_enabled);
+        setMessages([
+          {
+            id: "welcome",
+            role: "assistant",
+            content: config.welcome_message,
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+      } catch {
+        // keep fallback demo content
+      }
+    }
+
+    void loadWidgetConfig();
+  }, [widgetKey]);
 
   const transcriptCount = useMemo(() => messages.length - 1, [messages.length]);
 
@@ -91,7 +121,14 @@ export function ChatWidget() {
     try {
       const response = await sendChatMessage({
         message,
+        widgetKey,
+        tenantId: widgetConfig?.tenant_id,
+        storeId: widgetConfig?.store_id,
         sessionId,
+        metadata: {
+          business_name: widgetConfig?.store_name,
+          support_email: widgetConfig?.support_email,
+        },
       });
       setSessionId(response.session_id ?? sessionId);
       setMessages((current) => [
@@ -129,9 +166,9 @@ export function ChatWidget() {
           <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-4">
             <div>
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Sparkles className="h-4 w-4 text-accent2" /> OmniNew assistant
+                <Sparkles className="h-4 w-4 text-accent2" /> {widgetConfig?.assistant_name ?? "OmniNew assistant"}
               </div>
-              <div className="text-xs text-slate-400">Shopify sales + support widget</div>
+              <div className="text-xs text-slate-400">{widgetConfig?.store_name ?? "Shopify sales + support widget"}</div>
             </div>
             <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
               <X className="h-4 w-4" />

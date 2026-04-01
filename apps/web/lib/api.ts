@@ -1,44 +1,94 @@
-import type { ChatResponse } from "@/lib/types";
+import type { AssistantConfig, ChatResponse, PublicWidgetConfig, TenantBootstrapResponse } from "@/lib/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
-const DEFAULT_TENANT_ID = process.env.NEXT_PUBLIC_DEFAULT_TENANT_ID ?? "00000000-0000-0000-0000-000000000001";
-const DEFAULT_STORE_ID = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID ?? "00000000-0000-0000-0000-000000000001";
 
 export function getApiBaseUrl() {
   return API_BASE_URL;
 }
 
-export async function connectShopifyStore(input: {
+async function parseJson<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    let detail = `Request failed with status ${response.status}`;
+    try {
+      const data = (await response.json()) as { detail?: string };
+      if (data.detail) {
+        detail = data.detail;
+      }
+    } catch {
+      // ignore JSON parsing failure
+    }
+    throw new Error(detail);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export async function bootstrapTenant(input: {
+  business_name: string;
+  owner_email: string;
   shop_domain: string;
   admin_access_token: string;
   storefront_access_token?: string;
-  tenant_id?: string;
+  assistant_name: string;
+  tone: "sales" | "balanced" | "support";
+  welcome_message: string;
+  voice_enabled: boolean;
 }) {
-  const response = await fetch(`${API_BASE_URL}/shopify/connect`, {
+  const response = await fetch(`${API_BASE_URL}/tenants/bootstrap`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      tenant_id: input.tenant_id ?? DEFAULT_TENANT_ID,
-      shop_domain: input.shop_domain,
-      admin_access_token: input.admin_access_token,
-      storefront_access_token: input.storefront_access_token || null,
-    }),
+    body: JSON.stringify(input),
   });
 
-  if (!response.ok) {
-    throw new Error(`Connect failed with status ${response.status}`);
+  return parseJson<TenantBootstrapResponse>(response);
+}
+
+export async function getAssistantConfig(input: { tenantId: string; storeId?: string | null }) {
+  const search = new URLSearchParams({ tenant_id: input.tenantId });
+  if (input.storeId) {
+    search.set("store_id", input.storeId);
   }
 
-  return response.json();
+  const response = await fetch(`${API_BASE_URL}/assistant-config/?${search.toString()}`);
+  return parseJson<AssistantConfig>(response);
+}
+
+export async function updateAssistantConfig(input: {
+  tenant_id: string;
+  store_id?: string | null;
+  assistant_name: string;
+  tone: "sales" | "balanced" | "support";
+  system_prompt?: string | null;
+  welcome_message: string;
+  voice_enabled: boolean;
+  sales_mode_enabled: boolean;
+  support_mode_enabled: boolean;
+  do_agent_id?: string | null;
+  theme_color?: string | null;
+}) {
+  const response = await fetch(`${API_BASE_URL}/assistant-config/`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+
+  return parseJson<AssistantConfig>(response);
+}
+
+export async function getWidgetPublicConfig(widgetKey: string) {
+  const response = await fetch(`${API_BASE_URL}/tenants/widget/${encodeURIComponent(widgetKey)}`);
+  return parseJson<PublicWidgetConfig>(response);
 }
 
 export async function syncShopifyStore(input: {
-  shop_domain: string;
-  admin_access_token: string;
-  tenant_id?: string;
-  store_id?: string;
+  tenant_id: string;
+  store_id: string;
+  shop_domain?: string;
+  admin_access_token?: string;
   include_products?: boolean;
   include_collections?: boolean;
   include_policies?: boolean;
@@ -49,28 +99,28 @@ export async function syncShopifyStore(input: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      tenant_id: input.tenant_id ?? DEFAULT_TENANT_ID,
-      store_id: input.store_id ?? DEFAULT_STORE_ID,
-      shop_domain: input.shop_domain,
-      admin_access_token: input.admin_access_token,
+      tenant_id: input.tenant_id,
+      store_id: input.store_id,
+      shop_domain: input.shop_domain ?? null,
+      admin_access_token: input.admin_access_token ?? null,
       include_products: input.include_products ?? true,
       include_collections: input.include_collections ?? true,
       include_policies: input.include_policies ?? true,
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Sync failed with status ${response.status}`);
-  }
-
-  return response.json();
+  return parseJson<{ products_synced?: number; collections_synced?: number; policies_synced?: number }>(response);
 }
 
 export async function sendChatMessage(input: {
   message: string;
+  widgetKey?: string | null;
+  tenantId?: string | null;
+  storeId?: string | null;
   sessionId?: string | null;
   customerName?: string;
   customerEmail?: string;
+  metadata?: Record<string, unknown>;
 }) {
   const response = await fetch(`${API_BASE_URL}/chat/`, {
     method: "POST",
@@ -78,46 +128,45 @@ export async function sendChatMessage(input: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      tenant_id: DEFAULT_TENANT_ID,
-      store_id: DEFAULT_STORE_ID,
+      widget_key: input.widgetKey ?? null,
+      tenant_id: input.tenantId ?? null,
+      store_id: input.storeId ?? null,
       session_id: input.sessionId ?? null,
       customer_name: input.customerName ?? null,
       customer_email: input.customerEmail ?? null,
       message: input.message,
       history: [],
-      metadata: {
-        business_name: "OmniNew Demo Store",
-        support_email: "support@example.com",
-      },
+      metadata: input.metadata ?? {},
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Chat failed with status ${response.status}`);
-  }
-
-  return (await response.json()) as ChatResponse;
+  return parseJson<ChatResponse>(response);
 }
 
-export async function createVoiceToken(input: { identity: string; roomName: string }) {
+export async function createVoiceToken(input: {
+  identity: string;
+  roomName?: string | null;
+  sessionId?: string | null;
+  widgetKey?: string | null;
+  tenantId?: string | null;
+  storeId?: string | null;
+}) {
   const response = await fetch(`${API_BASE_URL}/voice/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      tenant_id: DEFAULT_TENANT_ID,
-      store_id: DEFAULT_STORE_ID,
+      widget_key: input.widgetKey ?? null,
+      tenant_id: input.tenantId ?? null,
+      store_id: input.storeId ?? null,
+      session_id: input.sessionId ?? null,
       identity: input.identity,
-      room_name: input.roomName,
+      room_name: input.roomName ?? null,
       can_publish: true,
       can_subscribe: true,
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Voice token failed with status ${response.status}`);
-  }
-
-  return response.json() as Promise<{ token: string; ws_url: string; room_name: string }>;
+  return parseJson<{ token: string; ws_url: string; room_name: string }>(response);
 }

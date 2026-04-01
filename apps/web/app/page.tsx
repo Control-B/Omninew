@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Bot, PhoneCall, ShoppingBag, Sparkles } from "lucide-react";
+import { Suspense } from "react";
 
 import { ChatWidget } from "@/components/widget/chat-widget";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +84,9 @@ export default function HomePage() {
           </Card>
         ))}
       </section>
-      <ChatWidget />
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
     </main>
   );
 }

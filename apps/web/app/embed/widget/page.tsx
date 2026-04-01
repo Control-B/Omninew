@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { ChatWidget } from "@/components/widget/chat-widget";
 
 export const dynamic = "force-static";
@@ -5,7 +7,9 @@ export const dynamic = "force-static";
 export default function EmbedWidgetPage() {
   return (
     <main className="min-h-screen bg-transparent">
-      <ChatWidget />
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
     </main>
   );
 }
