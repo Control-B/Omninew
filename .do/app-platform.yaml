@@ -1,0 +1,97 @@
+name: omninew
+region: nyc
+services:
+  - name: web
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: YOUR_GITHUB_USERNAME/Omninew
+    source_dir: apps/web
+    dockerfile_path: apps/web/Dockerfile
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: NEXT_PUBLIC_APP_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${APP_URL}
+      - key: NEXT_PUBLIC_API_BASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${API_URL}/api/v1
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${SUPABASE_URL}
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${SUPABASE_ANON_KEY}
+      - key: NEXT_PUBLIC_LIVEKIT_WS_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${LIVEKIT_WS_URL}
+      - key: NEXT_PUBLIC_DEFAULT_TENANT_ID
+        scope: RUN_AND_BUILD_TIME
+        value: 00000000-0000-0000-0000-000000000001
+      - key: NEXT_PUBLIC_DEFAULT_STORE_ID
+        scope: RUN_AND_BUILD_TIME
+        value: 00000000-0000-0000-0000-000000000001
+  - name: api
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: YOUR_GITHUB_USERNAME/Omninew
+    source_dir: apps/api
+    dockerfile_path: apps/api/Dockerfile
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /api
+    health_check:
+      http_path: /api/v1/health
+    envs:
+      - key: APP_NAME
+        scope: RUN_AND_BUILD_TIME
+        value: OmniNew Shopify AI API
+      - key: ENVIRONMENT
+        scope: RUN_AND_BUILD_TIME
+        value: production
+      - key: API_V1_PREFIX
+        scope: RUN_AND_BUILD_TIME
+        value: /api/v1
+      - key: CORS_ORIGINS
+        scope: RUN_AND_BUILD_TIME
+        value: '["${APP_URL}"]'
+      - key: SUPABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${SUPABASE_URL}
+      - key: SUPABASE_ANON_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${SUPABASE_ANON_KEY}
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${SUPABASE_SERVICE_ROLE_KEY}
+      - key: DO_AI_AGENT_BASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${DO_AI_AGENT_BASE_URL}
+      - key: DO_AI_AGENT_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${DO_AI_AGENT_KEY}
+      - key: DO_AI_AGENT_ID
+        scope: RUN_AND_BUILD_TIME
+        value: ${DO_AI_AGENT_ID}
+      - key: LIVEKIT_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${LIVEKIT_API_KEY}
+      - key: LIVEKIT_API_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+        value: ${LIVEKIT_API_SECRET}
+      - key: LIVEKIT_WS_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${LIVEKIT_WS_URL}
