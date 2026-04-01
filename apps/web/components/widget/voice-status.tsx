@@ -21,7 +21,7 @@ export function VoiceStatus({
             <Mic className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-sm font-medium text-white">LiveKit voice</div>
+            <div className="text-sm font-medium text-white">OmniNew voice</div>
             <div className="text-xs text-slate-400">Website voice + AI telephony ready</div>
           </div>
         </div>

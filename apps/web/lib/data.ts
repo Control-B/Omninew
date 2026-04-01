@@ -80,7 +80,7 @@ export const sampleTranscripts: TranscriptSummary[] = [
   {
     id: "session-2",
     customer: "Voice caller #204",
-    channel: "livekit voice",
+    channel: "voice",
     summary: "Requested policy clarification and left callback number for support.",
     createdAt: "2026-03-31T18:15:00Z",
   },

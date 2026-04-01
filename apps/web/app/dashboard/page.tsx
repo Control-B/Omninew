@@ -11,13 +11,13 @@ export default function DashboardOverviewPage() {
         <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Overview</div>
         <h1 className="mt-2 text-3xl font-semibold text-white">Merchant dashboard</h1>
         <p className="mt-2 text-sm text-slate-300">
-          A conversion-focused control center for Shopify AI chat, LiveKit voice, transcripts, and lead capture.
+          A conversion-focused control center for Shopify AI chat, voice, transcripts, and lead capture.
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Conversations" value="184" trend="+12% this week" />
         <StatCard label="Leads captured" value="27" trend="+8 high-intent" />
-        <StatCard label="Voice sessions" value="11" trend="LiveKit ready" />
+        <StatCard label="Voice sessions" value="11" trend="Voice ready" />
         <StatCard label="Sync freshness" value="14m" trend="catalog current" />
       </div>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -28,8 +28,8 @@ export default function DashboardOverviewPage() {
           </div>
           <div className="space-y-3 text-sm text-slate-300">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">Product sync refreshed inventory and policy data for the last connected store.</div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">DO AI Agent prompt tuned for stronger bundle recommendations and clearer support handoff behavior.</div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">LiveKit voice controls are enabled in the widget shell for cloud voice and telephony expansion.</div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">OmniNew AI prompt tuned for stronger bundle recommendations and clearer support handoff behavior.</div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">Voice controls are enabled in the widget shell for cloud voice and telephony expansion.</div>
           </div>
         </Card>
         <Card className="space-y-4">

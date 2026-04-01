@@ -13,12 +13,12 @@ const featureCards = [
     icon: ShoppingBag,
   },
   {
-    title: "DO AI text orchestration",
-    body: "Frontend is ready to send customer chat context into your FastAPI orchestration layer and DigitalOcean AI Agent.",
+    title: "OmniNew AI engine",
+    body: "Every customer message is routed through OmniNew's AI engine for accurate product recommendations and contextual support answers.",
     icon: Bot,
   },
   {
-    title: "LiveKit voice + telephony",
+    title: "Voice + telephony",
     body: "The widget includes voice-ready controls and can expand into cloud voice sessions and AI phone support.",
     icon: PhoneCall,
   },
@@ -35,7 +35,7 @@ export default function HomePage() {
               Increase conversions and automate support with a storefront AI assistant.
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-slate-300">
-              OmniNew combines a merchant dashboard, embedded chat widget, product recommendations, and LiveKit-ready voice surfaces for Shopify stores.
+              OmniNew combines a merchant dashboard, embedded chat widget, product recommendations, and voice-ready surfaces for Shopify stores.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">

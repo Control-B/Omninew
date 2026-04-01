@@ -11,7 +11,7 @@ export default function WidgetDemoPage() {
         <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Widget demo</div>
         <h1 className="mt-2 text-4xl font-semibold text-white">Storefront assistant shell</h1>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          This demo shows the floating widget, product suggestion cards, and LiveKit-ready voice state that can later be embedded into a Shopify storefront.
+          This demo shows the floating widget, product suggestion cards, and voice-ready state that can later be embedded into a Shopify storefront.
         </p>
       </div>
       <Card className="space-y-4">

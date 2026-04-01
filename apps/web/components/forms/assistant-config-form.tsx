@@ -129,7 +129,7 @@ export function AssistantConfigForm() {
             {voiceEnabled ? "Voice enabled" : "Voice disabled"}
           </Button>
           <Badge className={voiceEnabled ? "bg-green-500/15 text-green-200" : "bg-amber-500/15 text-amber-200"}>
-            {voiceEnabled ? "LiveKit ready" : "Text-only mode"}
+            {voiceEnabled ? "Voice ready" : "Text-only mode"}
           </Badge>
           <Button disabled={loading || saving} onClick={() => void handleSave()}>
             {saving ? "Saving..." : "Save config"}
