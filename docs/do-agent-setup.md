@@ -26,6 +26,29 @@ This project is designed to use **one shared DigitalOcean AI agent** for all mer
 - **Function route secret header**: `X-Agent-Route-Secret`
 - **Required API env**: `DO_AGENT_ROUTE_SECRET`
 
+## What to do in each DigitalOcean section
+
+### Knowledge Bases
+
+- **For now**: leave this empty.
+- **Why**: the first secure version should use synced Shopify products and policies from `OmniNew` as the source of truth.
+- **Add one later only if**: you want to upload extra merchant documents like shipping SOPs, sizing PDFs, warranty docs, or sales scripts.
+
+### Guardrails
+
+- **Add guardrails if the UI supports custom text/policies**:
+  - Do not invent prices, discounts, stock levels, delivery timelines, or policy exceptions.
+  - Do not collect payment card details.
+  - Do not claim refunds, order changes, or account access unless a tool confirms it.
+  - Escalate to human handoff when confidence is low.
+- **If DO guardrails are limited**: keep this protection in the system instruction and tool design; that is already built into the app.
+
+### Agent Routes
+
+- **For now**: leave this empty.
+- **Why**: agent routes are for routing to other agents, and this setup uses one shared agent only.
+- **Use later only if**: you create specialist agents like `returns-agent`, `sales-agent`, or `b2b-agent`.
+
 ## Function routes to add in DigitalOcean
 
 Use the values from `GET /api/v1/agent/blueprint`, or configure these manually:

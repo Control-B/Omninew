@@ -106,18 +106,20 @@ def build_agent_blueprint() -> AgentBlueprintResponse:
         model=DO_AGENT_MODEL,
         workspace_strategy="Create one shared DigitalOcean AI agent for OmniNew and inject tenant/store context at runtime instead of creating one agent per merchant or shopper.",
         knowledge_base_strategy=[
+            "For the first secure version, leave DigitalOcean Knowledge Bases empty and use synced Shopify data from OmniNew as the source of truth.",
             "Use Shopify-synced products and policies from the app database as the primary knowledge source.",
             "Avoid one separate DigitalOcean knowledge base per merchant for the initial version.",
             "Add merchant-specific documents later only for high-value tenants that need dedicated knowledge isolation.",
         ],
         guardrails=[
+            "Block unsupported claims about refunds, shipping timelines, discounts, warranties, or order changes unless tool data confirms them.",
             "No hallucinated product facts, prices, policy exceptions, or delivery promises.",
             "No payment card collection or unsafe checkout instructions.",
             "Escalate to handoff when confidence is low or the shopper requests a human.",
             "Use tools for policy and product claims instead of guessing.",
         ],
         system_prompt=DO_AGENT_SYSTEM_PROMPT,
-        agent_routes=function_routes,
+        agent_routes=[],
         function_routes=function_routes,
         env_requirements=[
             "DO_AI_AGENT_BASE_URL",
@@ -128,6 +130,8 @@ def build_agent_blueprint() -> AgentBlueprintResponse:
         notes=[
             "Preferred model is set to openai/gpt-oss-120b.",
             "Keep one shared base agent and store per-tenant overrides in OmniNew, not in separate DO agents initially.",
+            "Leave Agent Routes empty unless you later create specialist sub-agents such as returns-only or sales-only agents.",
+            "Leave Knowledge Bases empty initially unless you need uploaded PDFs or merchant documents outside the synced Shopify catalog/policies.",
             "Use the route secret only in DigitalOcean dashboard function-route configuration, never in the browser.",
         ],
     )

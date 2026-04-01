@@ -35,6 +35,8 @@ Multi-tenant Shopify AI assistant built with a `Next.js` frontend in `apps/web` 
 - **Blueprint endpoint**: `GET /api/v1/agent/blueprint`
 - **Dashboard guide**: `docs/do-agent-setup.md`
 - **Recommended model**: `openai/gpt-oss-120b`
+- **Knowledge bases**: leave empty initially
+- **Agent routes**: leave empty initially
 - **Function routes**: `POST /api/v1/agent-tools/product-search`, `POST /api/v1/agent-tools/policy-lookup`, `POST /api/v1/agent-tools/lead-capture`, `POST /api/v1/agent-tools/handoff`
 - **Route auth**: set `DO_AGENT_ROUTE_SECRET` and pass it as `X-Agent-Route-Secret` from DigitalOcean agent tool configuration
 
