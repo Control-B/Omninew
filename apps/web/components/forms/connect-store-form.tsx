@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { bootstrapTenant } from "@/lib/api";
+import { bootstrapTenant, buildShopifyInstallUrl } from "@/lib/api";
 import { setMerchantContext } from "@/lib/tenant-context";
 import type { MerchantContext } from "@/lib/types";
 
@@ -17,6 +17,7 @@ export function ConnectStoreForm() {
   const [shopDomain, setShopDomain] = useState("");
   const [adminToken, setAdminToken] = useState("");
   const [storefrontToken, setStorefrontToken] = useState("");
+  const [tone] = useState<"sales" | "balanced" | "support">("balanced");
   const [welcomeMessage, setWelcomeMessage] = useState(
     "Hi! I can recommend products, answer policy questions, and help capture leads for premium items.",
   );
@@ -68,8 +69,34 @@ export function ConnectStoreForm() {
     }
   }
 
+  function startOAuthInstall() {
+    setError("");
+    setResult("");
+
+    if (!businessName || !ownerEmail || !assistantName || !shopDomain) {
+      setError("Business name, owner email, assistant name, and shop domain are required for OAuth install.");
+      return;
+    }
+
+    window.location.href = buildShopifyInstallUrl({
+      shop: shopDomain,
+      businessName,
+      ownerEmail,
+      assistantName,
+      tone,
+      welcomeMessage,
+      voiceEnabled: true,
+    });
+  }
+
   return (
     <Card>
+      <div className="mb-6 rounded-2xl border border-indigo-400/20 bg-indigo-500/10 p-4 text-sm text-slate-200">
+        <div className="font-medium text-white">Recommended: Shopify OAuth install</div>
+        <p className="mt-2 text-slate-300">
+          OAuth is the production SaaS path. It installs OmniNew on the merchant store, exchanges the admin token securely, provisions the tenant, and redirects back here with a widget key.
+        </p>
+      </div>
       <form className="space-y-4" onSubmit={onSubmit}>
         <div>
           <label className="mb-2 block text-sm text-slate-300">Business name</label>
@@ -116,8 +143,11 @@ export function ConnectStoreForm() {
           <Textarea value={welcomeMessage} onChange={(event) => setWelcomeMessage(event.target.value)} />
         </div>
         <div className="flex items-center gap-3">
+          <Button type="button" onClick={startOAuthInstall} variant="primary">
+            Connect with Shopify OAuth
+          </Button>
           <Button disabled={loading} type="submit">
-            {loading ? "Creating SaaS tenant..." : "Create tenant + connect store"}
+            {loading ? "Creating SaaS tenant..." : "Manual token bootstrap"}
           </Button>
           {result ? <span className="text-sm text-green-300">{result}</span> : null}
           {error ? <span className="text-sm text-rose-300">{error}</span> : null}

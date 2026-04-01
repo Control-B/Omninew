@@ -6,6 +6,27 @@ export function getApiBaseUrl() {
   return API_BASE_URL;
 }
 
+export function buildShopifyInstallUrl(input: {
+  shop: string;
+  businessName: string;
+  ownerEmail: string;
+  assistantName: string;
+  tone: "sales" | "balanced" | "support";
+  welcomeMessage: string;
+  voiceEnabled: boolean;
+}) {
+  const search = new URLSearchParams({
+    shop: input.shop,
+    business_name: input.businessName,
+    owner_email: input.ownerEmail,
+    assistant_name: input.assistantName,
+    tone: input.tone,
+    welcome_message: input.welcomeMessage,
+    voice_enabled: String(input.voiceEnabled),
+  });
+  return `${API_BASE_URL}/auth/shopify/install?${search.toString()}`;
+}
+
 async function parseJson<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let detail = `Request failed with status ${response.status}`;

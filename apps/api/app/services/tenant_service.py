@@ -148,6 +148,104 @@ class TenantService:
             welcome_message=payload.welcome_message,
         )
 
+    async def upsert_shopify_installation(
+        self,
+        *,
+        business_name: str,
+        owner_email: str,
+        shop_domain: str,
+        admin_access_token: str,
+        storefront_access_token: str | None,
+        assistant_name: str,
+        tone: str,
+        welcome_message: str,
+        voice_enabled: bool,
+    ) -> TenantBootstrapResponse:
+        store_info = await self.shopify_service.get_store_info(shop_domain, admin_access_token)
+        existing_store = await self.db.select("shopify_stores", filters={"shop_domain": shop_domain}, single=True)
+
+        if existing_store:
+            tenant_id = UUID(existing_store["tenant_id"])
+            store_id = UUID(existing_store["id"])
+            await self.db.update(
+                "tenants",
+                {
+                    "name": business_name,
+                    "metadata": {
+                        **(await self._fetch_tenant_metadata(tenant_id)),
+                        "shop_domain": shop_domain,
+                        "origin": "shopify_oauth",
+                    },
+                },
+                filters={"id": str(tenant_id)},
+            )
+            await self.db.update(
+                "shopify_stores",
+                {
+                    "store_name": store_info.get("name") or business_name,
+                    "email": store_info.get("email"),
+                    "currency_code": store_info.get("currencyCode"),
+                    "status": "connected",
+                    "metadata": {"raw": store_info},
+                },
+                filters={"id": str(store_id)},
+            )
+            await self._upsert_user(tenant_id=tenant_id, owner_email=owner_email, business_name=business_name)
+            await self._upsert_shopify_token(
+                tenant_id=tenant_id,
+                store_id=store_id,
+                token_type="admin",
+                token_value=admin_access_token,
+            )
+            if storefront_access_token:
+                await self._upsert_shopify_token(
+                    tenant_id=tenant_id,
+                    store_id=store_id,
+                    token_type="storefront",
+                    token_value=storefront_access_token,
+                )
+            await self._upsert_assistant_config(
+                tenant_id=tenant_id,
+                store_id=store_id,
+                assistant_name=assistant_name,
+                tone=tone,
+                welcome_message=welcome_message,
+                voice_enabled=voice_enabled,
+            )
+            widget_key = await self._ensure_widget_deployment(
+                tenant_id=tenant_id,
+                store_id=store_id,
+                assistant_name=assistant_name,
+                welcome_message=welcome_message,
+                voice_enabled=voice_enabled,
+                shop_domain=shop_domain,
+            )
+            return TenantBootstrapResponse(
+                tenant_id=tenant_id,
+                store_id=store_id,
+                widget_key=widget_key,
+                business_name=business_name,
+                shop_domain=shop_domain,
+                store_name=store_info.get("name") or business_name,
+                assistant_name=assistant_name,
+                tone=tone,
+                welcome_message=welcome_message,
+            )
+
+        return await self.bootstrap_tenant(
+            TenantBootstrapRequest(
+                business_name=business_name,
+                owner_email=owner_email,
+                shop_domain=shop_domain,
+                admin_access_token=admin_access_token,
+                storefront_access_token=storefront_access_token,
+                assistant_name=assistant_name,
+                tone=tone,
+                welcome_message=welcome_message,
+                voice_enabled=voice_enabled,
+            )
+        )
+
     async def get_assistant_config(self, tenant_id: UUID, store_id: UUID | None = None) -> AssistantConfigResponse:
         row = await self._fetch_assistant_row(tenant_id=tenant_id, store_id=store_id)
         if not row:
@@ -293,6 +391,123 @@ class TenantService:
         if isinstance(rows, list) and rows:
             return rows[0]
         return None
+
+    async def _fetch_tenant_metadata(self, tenant_id: UUID) -> dict:
+        row = await self.db.select("tenants", columns="metadata", filters={"id": str(tenant_id)}, single=True)
+        return (row or {}).get("metadata", {})
+
+    async def _upsert_user(self, *, tenant_id: UUID, owner_email: str, business_name: str) -> None:
+        existing = await self.db.select(
+            "users",
+            filters={"tenant_id": str(tenant_id), "email": owner_email},
+            single=True,
+        )
+        payload = {
+            "tenant_id": str(tenant_id),
+            "email": owner_email,
+            "full_name": business_name,
+            "role": "merchant_admin",
+            "metadata": {"origin": "shopify_oauth"},
+        }
+        if existing and existing.get("id"):
+            await self.db.update("users", payload, filters={"id": existing["id"]})
+        else:
+            await self.db.insert("users", {"id": str(uuid4()), **payload})
+
+    async def _upsert_shopify_token(self, *, tenant_id: UUID, store_id: UUID, token_type: str, token_value: str) -> None:
+        existing = await self.db.select(
+            "shopify_tokens",
+            filters={"tenant_id": str(tenant_id), "store_id": str(store_id), "token_type": token_type},
+            order="created_at.desc",
+            limit=1,
+            single=True,
+        )
+        payload = {
+            "tenant_id": str(tenant_id),
+            "store_id": str(store_id),
+            "token_type": token_type,
+            "token_encrypted": token_value,
+            "metadata": {"source": "shopify_oauth"},
+        }
+        if existing and existing.get("id"):
+            await self.db.update("shopify_tokens", payload, filters={"id": existing["id"]})
+        else:
+            await self.db.insert("shopify_tokens", {"id": str(uuid4()), **payload})
+
+    async def _upsert_assistant_config(
+        self,
+        *,
+        tenant_id: UUID,
+        store_id: UUID,
+        assistant_name: str,
+        tone: str,
+        welcome_message: str,
+        voice_enabled: bool,
+    ) -> None:
+        await self.update_assistant_config(
+            AssistantConfigRequest(
+                tenant_id=tenant_id,
+                store_id=store_id,
+                assistant_name=assistant_name,
+                tone=tone,  # type: ignore[arg-type]
+                system_prompt=None,
+                welcome_message=welcome_message,
+                voice_enabled=voice_enabled,
+                sales_mode_enabled=True,
+                support_mode_enabled=True,
+            )
+        )
+
+    async def _ensure_widget_deployment(
+        self,
+        *,
+        tenant_id: UUID,
+        store_id: UUID,
+        assistant_name: str,
+        welcome_message: str,
+        voice_enabled: bool,
+        shop_domain: str,
+    ) -> str:
+        existing = await self.db.select(
+            "widget_deployments",
+            filters={"tenant_id": str(tenant_id), "store_id": str(store_id), "label": "Default storefront widget"},
+            single=True,
+        )
+        if existing and existing.get("public_key"):
+            await self.db.update(
+                "widget_deployments",
+                {
+                    "allowed_domains": [f"https://{shop_domain}"],
+                    "status": "active",
+                    "settings": {
+                        "assistant_name": assistant_name,
+                        "welcome_message": welcome_message,
+                        "voice_enabled": voice_enabled,
+                    },
+                },
+                filters={"id": existing["id"]},
+            )
+            return existing["public_key"]
+
+        widget_key = self._generate_widget_key()
+        await self.db.insert(
+            "widget_deployments",
+            {
+                "id": str(uuid4()),
+                "tenant_id": str(tenant_id),
+                "store_id": str(store_id),
+                "public_key": widget_key,
+                "label": "Default storefront widget",
+                "allowed_domains": [f"https://{shop_domain}"],
+                "status": "active",
+                "settings": {
+                    "assistant_name": assistant_name,
+                    "welcome_message": welcome_message,
+                    "voice_enabled": voice_enabled,
+                },
+            },
+        )
+        return widget_key
 
     async def _fetch_assistant_row(self, *, tenant_id: UUID, store_id: UUID | None) -> dict | None:
         filters = {"tenant_id": str(tenant_id)}

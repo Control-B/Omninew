@@ -4,9 +4,14 @@ from typing import Any
 
 import httpx
 
+from app.core.config import get_settings
+
 
 class ShopifyService:
     admin_version = "2025-10"
+
+    def __init__(self) -> None:
+        self.settings = get_settings()
 
     async def connect_store(
         self,
@@ -27,10 +32,82 @@ class ShopifyService:
 
     async def get_store_info(self, shop_domain: str, admin_access_token: str) -> dict[str, Any]:
         query = {
-        "query": "{ shop { name email myshopifyDomain description currencyCode } }",
+            "query": "{ shop { name email myshopifyDomain description currencyCode } }",
         }
         data = await self._admin_graphql(shop_domain, admin_access_token, query)
         return data.get("data", {}).get("shop", {})
+
+    async def exchange_oauth_code(self, shop_domain: str, code: str) -> dict[str, Any]:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"https://{shop_domain}/admin/oauth/access_token",
+                json={
+                    "client_id": self.settings.shopify_app_key,
+                    "client_secret": self.settings.shopify_app_secret,
+                    "code": code,
+                },
+            )
+            response.raise_for_status()
+            return response.json()
+
+    async def create_storefront_access_token(
+        self,
+        shop_domain: str,
+        admin_access_token: str,
+        title: str = "OmniNew Storefront Token",
+    ) -> str | None:
+        payload = {
+            "query": """
+            mutation CreateStorefrontToken($title: String!) {
+              storefrontAccessTokenCreate(input: {title: $title}) {
+                storefrontAccessToken {
+                  accessToken
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }
+            """,
+            "variables": {"title": title},
+        }
+        data = await self._admin_graphql(shop_domain, admin_access_token, payload)
+        token_data = data.get("data", {}).get("storefrontAccessTokenCreate", {})
+        return token_data.get("storefrontAccessToken", {}).get("accessToken")
+
+    async def register_uninstall_webhook(
+        self,
+        shop_domain: str,
+        admin_access_token: str,
+        callback_url: str,
+    ) -> dict[str, Any]:
+        payload = {
+            "query": """
+            mutation RegisterWebhook($topic: WebhookSubscriptionTopic!, $callbackUrl: URL!) {
+              webhookSubscriptionCreate(
+                topic: $topic,
+                webhookSubscription: {callbackUrl: $callbackUrl, format: JSON}
+              ) {
+                webhookSubscription {
+                  id
+                  endpoint {
+                    __typename
+                  }
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }
+            """,
+            "variables": {
+                "topic": "APP_UNINSTALLED",
+                "callbackUrl": callback_url,
+            },
+        }
+        return await self._admin_graphql(shop_domain, admin_access_token, payload)
 
     async def fetch_products(self, shop_domain: str, admin_access_token: str, limit: int = 50) -> list[dict[str, Any]]:
         query = {
