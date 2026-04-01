@@ -1,0 +1,30 @@
+[
+  {
+    "apihost": "https://faas-nyc1-2ef2e6cc.doserverless.co",
+    "namespace": "fn-5690739f-f6e6-42ee-8614-6b75967a97c4",
+    "packageVersions": {
+      "agent-tools": {
+        "version": "0.0.2",
+        "digest": "8475047c59d36374c7352eda046693833246ff8f24d130d61a1f0b0f49451f54"
+      }
+    },
+    "actionVersions": {
+      "agent-tools/handoff": {
+        "version": "0.0.2",
+        "digest": "379953efaaab3da7ded3ee1affe2e5e038290ce01d5b1e987ab33182566f8089"
+      },
+      "agent-tools/lead-capture": {
+        "version": "0.0.2",
+        "digest": "37dad9f76e65959213e08182d8ebf0ecf51757fcbed7afb87de6f123810df75b"
+      },
+      "agent-tools/policy-lookup": {
+        "version": "0.0.2",
+        "digest": "02874d13beebf0ad8b9cb54c00058becd1ddbfb26cc54612d275d81c0c1f1894"
+      },
+      "agent-tools/product-search": {
+        "version": "0.0.2",
+        "digest": "76b6cf68c9cf3f5ca19cac46dff9d924efc10a3aaf41bfd86e84ff192bc7249c"
+      }
+    }
+  }
+]

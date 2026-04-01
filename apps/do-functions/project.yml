@@ -1,0 +1,18 @@
+packages:
+  - name: agent-tools
+    environment:
+      OMNINEW_API_BASE_URL: https://omniweb-console-82mod.ondigitalocean.app
+      OMNINEW_AGENT_ROUTE_SECRET: t3gzI5l9_gJqaaR5YlwFyDDI69R4nrAI4xVdx1VSRgg
+    functions:
+      - name: product-search
+        runtime: nodejs:18
+        web: true
+      - name: policy-lookup
+        runtime: nodejs:18
+        web: true
+      - name: lead-capture
+        runtime: nodejs:18
+        web: true
+      - name: handoff
+        runtime: nodejs:18
+        web: true
