@@ -15,5 +15,6 @@ async def chat(
     try:
         result = await conversation_service.handle_chat(payload)
     except ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error)) from error
+        status_code = 402 if "Plan limit reached" in str(error) else 400
+        raise HTTPException(status_code=status_code, detail=str(error)) from error
     return ChatResponse(**result)

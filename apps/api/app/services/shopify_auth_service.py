@@ -10,6 +10,7 @@ from typing import Any
 from urllib.parse import urlencode
 
 from app.core.config import get_settings
+from app.schemas.common import ShopifySetupStatusResponse
 from app.services.shopify_service import ShopifyService
 from app.services.tenant_service import TenantService
 
@@ -32,6 +33,48 @@ class ShopifyAuthService:
         self.shopify_service = shopify_service
         self.tenant_service = tenant_service
         self.settings = get_settings()
+
+    def get_setup_status(self) -> ShopifySetupStatusResponse:
+        app_key_configured = bool(self.settings.shopify_app_key)
+        app_secret_configured = bool(self.settings.shopify_app_secret)
+        webhook_secret_configured = bool(self.settings.shopify_webhook_secret)
+        https_ready = self.settings.app_url.startswith("https://") and self.settings.api_public_url.startswith("https://")
+
+        notes: list[str] = []
+        if not app_key_configured or not app_secret_configured:
+            notes.append("Set `SHOPIFY_APP_KEY` and `SHOPIFY_APP_SECRET` in the API service.")
+        if not webhook_secret_configured:
+            notes.append("Set `SHOPIFY_WEBHOOK_SECRET` so uninstall webhooks can be verified.")
+        if not https_ready:
+            notes.append("Use HTTPS values for `APP_URL` and `API_PUBLIC_URL` before enabling install flow in production.")
+        if self.settings.shopify_app_scopes:
+            notes.append("Copy the listed scopes into the Shopify Partner Dashboard app configuration.")
+
+        if app_key_configured and app_secret_configured and webhook_secret_configured and https_ready:
+            status = "ready"
+        elif app_key_configured or app_secret_configured or webhook_secret_configured:
+            status = "partial"
+        else:
+            status = "missing"
+
+        base = self.settings.api_public_url.rstrip("/")
+        install_url = f"{base}{self.settings.api_v1_prefix}/auth/shopify/install"
+
+        return ShopifySetupStatusResponse(
+            status=status,
+            app_url=self.settings.app_url,
+            api_public_url=self.settings.api_public_url,
+            dashboard_connect_url=f"{self.settings.app_url.rstrip('/')}/dashboard/connect",
+            install_url=install_url,
+            callback_url=self._callback_url(),
+            uninstall_webhook_url=self._uninstall_webhook_url(),
+            scopes=[scope.strip() for scope in self.settings.shopify_app_scopes.split(",") if scope.strip()],
+            app_key_configured=app_key_configured,
+            app_secret_configured=app_secret_configured,
+            webhook_secret_configured=webhook_secret_configured,
+            https_ready=https_ready,
+            notes=notes,
+        )
 
     def build_install_url(
         self,

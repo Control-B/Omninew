@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse
 from app.services.shopify_auth_service import ShopifyAuthService
 from app.api.deps import get_shopify_auth_service
 from app.core.config import get_settings
+from app.schemas.common import ShopifySetupStatusResponse
 
 router = APIRouter()
 
@@ -17,6 +18,13 @@ async def auth_status() -> dict[str, str]:
         "status": "ready" if settings.shopify_app_key and settings.shopify_app_secret else "pending",
         "message": "Shopify OAuth install flow is available when app credentials are configured.",
     }
+
+
+@router.get("/shopify/setup", response_model=ShopifySetupStatusResponse)
+async def shopify_setup_status(
+    auth_service: ShopifyAuthService = Depends(get_shopify_auth_service),
+) -> ShopifySetupStatusResponse:
+    return auth_service.get_setup_status()
 
 
 @router.get("/shopify/install")

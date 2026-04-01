@@ -1,6 +1,7 @@
 from app.agents.providers import BaseTextAgentProvider, DOTextAgentProvider
 from app.core.database import SupabaseGateway, get_supabase_gateway
 from app.services.conversation_service import ConversationService
+from app.services.billing_service import BillingService
 from app.services.lead_service import LeadService
 from app.services.livekit_service import LiveKitService
 from app.services.policy_sync_service import PolicySyncService
@@ -25,6 +26,10 @@ def get_tenant_service() -> TenantService:
 
 def get_shopify_auth_service() -> ShopifyAuthService:
     return ShopifyAuthService(get_shopify_service(), get_tenant_service())
+
+
+def get_billing_service() -> BillingService:
+    return BillingService(get_supabase_gateway())
 
 
 def get_product_sync_service() -> ProductSyncService:
@@ -54,6 +59,7 @@ def get_conversation_service() -> ConversationService:
         transcript_service=get_transcript_service(),
         lead_service=get_lead_service(),
         tenant_service=get_tenant_service(),
+        billing_service=get_billing_service(),
     )
 
 

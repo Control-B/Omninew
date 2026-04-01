@@ -2,8 +2,9 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import get_livekit_service, get_tenant_service
+from app.api.deps import get_billing_service, get_livekit_service, get_tenant_service
 from app.schemas.common import VoiceTokenRequest, VoiceTokenResponse
+from app.services.billing_service import BillingService
 from app.services.livekit_service import LiveKitService
 from app.services.tenant_service import TenantService
 
@@ -15,6 +16,7 @@ async def create_voice_token(
     payload: VoiceTokenRequest,
     livekit_service: LiveKitService = Depends(get_livekit_service),
     tenant_service: TenantService = Depends(get_tenant_service),
+    billing_service: BillingService = Depends(get_billing_service),
 ) -> VoiceTokenResponse:
     try:
         runtime_context = await tenant_service.resolve_runtime_context(
@@ -28,6 +30,15 @@ async def create_voice_token(
 
     if not runtime_context.voice_enabled:
         raise HTTPException(status_code=403, detail="Voice mode is disabled for this assistant.")
+
+    try:
+        await billing_service.enforce_allowance(
+            tenant_id=runtime_context.tenant_id,
+            metric_type="voice_sessions",
+            quantity=1,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=402, detail=str(error)) from error
 
     session_id = payload.session_id or uuid4()
     room_name = payload.room_name or (
@@ -47,5 +58,14 @@ async def create_voice_token(
         room_name=room_name,
         can_publish=payload.can_publish,
         can_subscribe=payload.can_subscribe,
+    )
+    await billing_service.record_usage(
+        tenant_id=runtime_context.tenant_id,
+        store_id=runtime_context.store_id,
+        session_id=session_id,
+        metric_type="voice_sessions",
+        quantity=1,
+        source="voice",
+        metadata={"room_name": room_name, "identity": payload.identity},
     )
     return VoiceTokenResponse(**result)

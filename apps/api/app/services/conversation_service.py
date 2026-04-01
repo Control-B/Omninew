@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from app.agents.providers import BaseTextAgentProvider
 from app.schemas.common import ChatRequest, LeadCapturePayload, ProductSuggestion, TranscriptRecord
 from app.services.do_agent_service import DOAgentService
+from app.services.billing_service import BillingService
 from app.services.lead_service import LeadService
 from app.services.shopify_service import ShopifyService
 from app.services.tenant_service import TenantService
@@ -21,11 +22,13 @@ class ConversationService:
         transcript_service: TranscriptService,
         lead_service: LeadService,
         tenant_service: TenantService,
+        billing_service: BillingService,
     ) -> None:
         self.shopify_service = shopify_service
         self.transcript_service = transcript_service
         self.lead_service = lead_service
         self.tenant_service = tenant_service
+        self.billing_service = billing_service
         self.agent_service = DOAgentService(text_agent_provider)
 
     async def handle_chat(
@@ -40,6 +43,11 @@ class ConversationService:
             tenant_id=chat_request.tenant_id,
             store_id=chat_request.store_id,
             metadata=chat_request.metadata,
+        )
+        await self.billing_service.enforce_allowance(
+            tenant_id=runtime_context.tenant_id,
+            metric_type="chat_messages",
+            quantity=1,
         )
         session_id = chat_request.session_id or uuid4()
 
@@ -110,6 +118,15 @@ class ConversationService:
             )
 
         suggestions = [ProductSuggestion(**item) for item in agent_response.get("suggestions", [])]
+        await self.billing_service.record_usage(
+            tenant_id=runtime_context.tenant_id,
+            store_id=runtime_context.store_id,
+            session_id=session_id,
+            metric_type="chat_messages",
+            quantity=1,
+            source="chat",
+            metadata={"widget_key": chat_request.widget_key, "assistant_name": runtime_context.assistant_name},
+        )
         return {
             "reply": agent_response["reply"],
             "suggestions": suggestions,

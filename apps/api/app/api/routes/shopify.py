@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import get_policy_sync_service, get_product_sync_service, get_shopify_service, get_tenant_service
+from app.api.deps import get_billing_service, get_policy_sync_service, get_product_sync_service, get_shopify_service, get_tenant_service
 from app.schemas.common import ShopifyConnectRequest, ShopifySyncRequest
+from app.services.billing_service import BillingService
 from app.services.policy_sync_service import PolicySyncService
 from app.services.product_sync_service import ProductSyncService
 from app.services.shopify_service import ShopifyService
@@ -29,6 +30,7 @@ async def sync_shopify_store(
     product_sync_service: ProductSyncService = Depends(get_product_sync_service),
     policy_sync_service: PolicySyncService = Depends(get_policy_sync_service),
     tenant_service: TenantService = Depends(get_tenant_service),
+    billing_service: BillingService = Depends(get_billing_service),
 ) -> dict:
     store = await tenant_service.get_store(tenant_id=payload.tenant_id, store_id=payload.store_id)
     if not store:
@@ -42,6 +44,15 @@ async def sync_shopify_store(
 
     if not shop_domain or not admin_access_token:
         raise HTTPException(status_code=400, detail="Stored Shopify credentials are incomplete for this store.")
+
+    try:
+        await billing_service.enforce_allowance(
+            tenant_id=payload.tenant_id,
+            metric_type="sync_runs",
+            quantity=1,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=402, detail=str(error)) from error
 
     results: dict[str, int] = {}
 
@@ -63,4 +74,17 @@ async def sync_shopify_store(
                 admin_access_token=admin_access_token,
             )
         )
+    await billing_service.record_usage(
+        tenant_id=payload.tenant_id,
+        store_id=payload.store_id,
+        session_id=None,
+        metric_type="sync_runs",
+        quantity=1,
+        source="shopify_sync",
+        metadata={
+            "include_products": payload.include_products,
+            "include_collections": payload.include_collections,
+            "include_policies": payload.include_policies,
+        },
+    )
     return results

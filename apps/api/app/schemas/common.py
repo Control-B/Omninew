@@ -185,6 +185,66 @@ class TenantBootstrapResponse(BaseModel):
     welcome_message: str
 
 
+class ShopifySetupStatusResponse(BaseModel):
+    status: Literal["ready", "partial", "missing"]
+    app_url: str
+    api_public_url: str
+    dashboard_connect_url: str
+    install_url: str
+    callback_url: str
+    uninstall_webhook_url: str
+    scopes: list[str] = Field(default_factory=list)
+    app_key_configured: bool = False
+    app_secret_configured: bool = False
+    webhook_secret_configured: bool = False
+    https_ready: bool = False
+    notes: list[str] = Field(default_factory=list)
+
+
+class SubscriptionPlanResponse(TimestampedResponse):
+    id: UUID | None = None
+    code: str
+    name: str
+    monthly_price_cents: int = 0
+    currency_code: str = "USD"
+    limits: dict[str, int | None] = Field(default_factory=dict)
+    is_active: bool = True
+
+
+class TenantSubscriptionResponse(TimestampedResponse):
+    id: UUID | None = None
+    tenant_id: UUID
+    status: str
+    billing_provider: str = "manual"
+    plan_code: str
+    plan_name: str
+    monthly_price_cents: int = 0
+    currency_code: str = "USD"
+    limits: dict[str, int | None] = Field(default_factory=dict)
+    current_period_start: datetime
+    current_period_end: datetime | None = None
+    cancel_at_period_end: bool = False
+
+
+class UsageMetricSummary(BaseModel):
+    metric_type: str
+    quantity: int = 0
+    limit: int | None = None
+    remaining: int | None = None
+
+
+class BillingOverviewResponse(BaseModel):
+    tenant_id: UUID
+    store_id: UUID | None = None
+    subscription: TenantSubscriptionResponse
+    usage: list[UsageMetricSummary] = Field(default_factory=list)
+
+
+class BillingPlanUpdateRequest(BaseModel):
+    tenant_id: UUID
+    plan_code: str = Field(min_length=2, max_length=40)
+
+
 class TranscriptRecord(BaseModel):
     tenant_id: UUID
     session_id: UUID
