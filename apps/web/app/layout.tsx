@@ -5,8 +5,8 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OmniNew | Shopify AI Assistant",
-  description: "Shopify-focused AI sales and support assistant dashboard and widget.",
+  title: "OmniNew by Omniweb",
+  description: "Shopify AI sales and support assistant — by Omniweb.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -14,20 +14,21 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="en">
       <body>
         <div className="relative min-h-screen">
-          <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07111f]/85 backdrop-blur">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <Link href="/" className="flex items-center gap-3 font-semibold tracking-tight">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-accent2 text-sm text-white shadow-glow">
-                  ON
+          <header className="sticky top-0 z-40 border-b border-white/8 bg-[#07111f]/90 backdrop-blur">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+              <Link href="/" className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent2 text-xs font-bold text-white shadow-glow">
+                  OW
                 </div>
-                <div>
-                  <div className="text-base text-white">OmniNew</div>
-                  <div className="text-xs text-slate-400">Shopify AI conversions + support</div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-semibold text-white">Omniweb</span>
+                  <span className="text-xs text-slate-500">/</span>
+                  <span className="text-sm font-medium text-slate-300">OmniNew</span>
                 </div>
               </Link>
-              <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
-                <Link href="/dashboard">Dashboard</Link>
-                <Link href="/widget-demo">Widget Demo</Link>
+              <nav className="hidden items-center gap-1 md:flex">
+                <Link href="/dashboard" className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:bg-white/8 hover:text-white">Dashboard</Link>
+                <Link href="/widget-demo" className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:bg-white/8 hover:text-white">Widget Demo</Link>
               </nav>
             </div>
           </header>

@@ -26,16 +26,16 @@ const featureCards = [
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-16 px-6 py-14">
-      <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+    <main className="mx-auto flex max-w-7xl flex-col gap-14 px-6 py-12">
+      <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="space-y-6">
-          <Badge className="bg-accent/15 text-indigo-100">Shopify-focused AI assistant MVP</Badge>
+          <Badge className="bg-accent/15 text-indigo-100">Omniweb product · Shopify AI assistant</Badge>
           <div className="space-y-4">
-            <h1 className="max-w-3xl text-5xl font-semibold tracking-tight text-white md:text-6xl">
-              Increase conversions and automate support with a storefront AI assistant.
+            <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-white md:text-6xl">
+              OmniNew helps Shopify brands convert more shoppers and automate support.
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-slate-300">
-              OmniNew combines a merchant dashboard, embedded chat widget, product recommendations, and voice-ready surfaces for Shopify stores.
+              Built by Omniweb, OmniNew combines a merchant dashboard, embedded storefront assistant, product recommendations, and voice-ready support surfaces.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -54,19 +54,19 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-        <Card className="space-y-5 border-white/15 bg-gradient-to-br from-slate-950/80 to-slate-900/70">
+        <Card className="space-y-5 rounded-[32px] border-white/8 bg-gradient-to-br from-[#0c1424] to-[#0b1020] p-6 shadow-glow">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 text-accent2">
               <Sparkles className="h-6 w-6" />
             </div>
             <div>
-              <div className="text-lg font-semibold">Launch-ready surfaces</div>
-              <div className="text-sm text-slate-400">Dashboard, widget, and backend hooks are scaffolded.</div>
+              <div className="text-lg font-semibold">Operator surfaces</div>
+              <div className="text-sm text-slate-400">Clean control layers for merchants, assistants, and storefront conversations.</div>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {featureCards.map((feature) => (
-              <div key={feature.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={feature.title} className="rounded-2xl border border-white/8 bg-white/[0.04] p-4">
                 <feature.icon className="mb-3 h-5 w-5 text-accent2" />
                 <div className="text-sm font-medium text-white">{feature.title}</div>
                 <p className="mt-2 text-sm leading-6 text-slate-400">{feature.body}</p>
@@ -75,14 +75,22 @@ export default function HomePage() {
           </div>
         </Card>
       </section>
-      <section className="grid gap-6 md:grid-cols-3">
-        {featureCards.map((feature) => (
-          <Card key={feature.title} className="space-y-3">
-            <feature.icon className="h-6 w-6 text-accent2" />
-            <h2 className="text-xl font-semibold text-white">{feature.title}</h2>
-            <p className="text-sm leading-7 text-slate-300">{feature.body}</p>
-          </Card>
-        ))}
+      <section className="grid gap-4 md:grid-cols-3">
+        <Card className="rounded-[28px] border-white/8 bg-[#0c1424]/95 p-5 shadow-glow">
+          <div className="text-xs uppercase tracking-[0.18em] text-slate-500">For merchants</div>
+          <div className="mt-4 text-2xl font-semibold text-white">A dashboard that feels operational</div>
+          <p className="mt-3 text-sm leading-7 text-slate-300">Give merchants a simple command center for store connection, assistant tuning, transcripts, and lead capture.</p>
+        </Card>
+        <Card className="rounded-[28px] border-white/8 bg-[#0c1424]/95 p-5 shadow-glow">
+          <div className="text-xs uppercase tracking-[0.18em] text-slate-500">For shoppers</div>
+          <div className="mt-4 text-2xl font-semibold text-white">A lightweight storefront assistant</div>
+          <p className="mt-3 text-sm leading-7 text-slate-300">Surface recommendations, answer policy questions, and escalate into richer support experiences when needed.</p>
+        </Card>
+        <Card className="rounded-[28px] border-white/8 bg-[#0c1424]/95 p-5 shadow-glow">
+          <div className="text-xs uppercase tracking-[0.18em] text-slate-500">For Omniweb</div>
+          <div className="mt-4 text-2xl font-semibold text-white">A branded product, not a vendor wrapper</div>
+          <p className="mt-3 text-sm leading-7 text-slate-300">Position OmniNew as the product experience while Omniweb stays the company behind the platform.</p>
+        </Card>
       </section>
       <Suspense fallback={null}>
         <ChatWidget />
