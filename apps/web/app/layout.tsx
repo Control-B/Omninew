@@ -20,11 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent2 text-xs font-bold text-white shadow-glow">
                   OW
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-semibold text-white">Omniweb</span>
-                  <span className="text-xs text-slate-500">/</span>
-                  <span className="text-sm font-medium text-slate-300">Omniweb</span>
-                </div>
+                <span className="text-sm font-semibold text-white">Omniweb</span>
               </Link>
               <nav className="hidden items-center gap-1 md:flex">
                 <Link href="/dashboard" className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:bg-white/8 hover:text-white">Dashboard</Link>
