@@ -6,7 +6,7 @@ import { embedSnippet } from "./embed-snippet";
 
 export default function WidgetDemoPage() {
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12">
+    <main className="mx-auto flex w-full max-w-[1500px] flex-col gap-8 px-6 py-12 xl:px-8">
       <div>
         <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Widget demo</div>
         <h1 className="mt-2 text-4xl font-semibold text-white">Storefront assistant shell</h1>

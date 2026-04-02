@@ -96,7 +96,7 @@ export function AssistantConfigForm() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <Card className="space-y-5">
         <div>
           <div className="mb-2 text-sm text-slate-400">Assistant name</div>

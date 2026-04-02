@@ -26,8 +26,8 @@ const featureCards = [
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-14 px-6 py-12">
-      <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+    <main className="mx-auto flex w-full max-w-[1600px] flex-col gap-14 px-6 py-12 xl:px-8">
+      <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
         <div className="space-y-6">
           <Badge className="bg-accent/15 text-indigo-100">Omniweb product · Shopify AI assistant</Badge>
           <div className="space-y-4">

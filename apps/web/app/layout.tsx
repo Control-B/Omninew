@@ -15,7 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body>
         <div className="relative min-h-screen">
           <header className="sticky top-0 z-40 border-b border-white/8 bg-[#07111f]/90 backdrop-blur">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+            <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-6 py-3 xl:px-8">
               <Link href="/" className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent2 text-xs font-bold text-white shadow-glow">
                   OW

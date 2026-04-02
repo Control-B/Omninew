@@ -47,7 +47,7 @@ export default function DashboardOverviewPage() {
         <StatCard label="Voice sessions" value="11" trend="Voice ready" />
         <StatCard label="Sync freshness" value="14m" trend="Catalog current" />
       </div>
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-6 lg:grid-cols-[1.35fr_0.95fr]">
         <Card className="rounded-[30px] border-white/8 bg-[#0c1424]/95 p-6 shadow-glow">
           <div className="flex items-center gap-3 text-white">
             <Activity className="h-5 w-5 text-accent2" />
