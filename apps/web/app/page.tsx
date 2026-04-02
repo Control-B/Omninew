@@ -32,10 +32,10 @@ export default function HomePage() {
           <Badge className="bg-accent/15 text-indigo-100">Omniweb product · Shopify AI assistant</Badge>
           <div className="space-y-4">
             <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-white md:text-6xl">
-              OmniNew helps Shopify brands convert more shoppers and automate support.
+              Omniweb helps Shopify brands convert more shoppers and automate support.
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-slate-300">
-              Built by Omniweb, OmniNew combines a merchant dashboard, embedded storefront assistant, product recommendations, and voice-ready support surfaces.
+              Omniweb combines a merchant dashboard, embedded storefront assistant, product recommendations, and voice-ready support surfaces.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -89,7 +89,7 @@ export default function HomePage() {
         <Card className="rounded-[28px] border-white/8 bg-[#0c1424]/95 p-5 shadow-glow">
           <div className="text-xs uppercase tracking-[0.18em] text-slate-500">For Omniweb</div>
           <div className="mt-4 text-2xl font-semibold text-white">A branded product, not a vendor wrapper</div>
-          <p className="mt-3 text-sm leading-7 text-slate-300">Position OmniNew as the product experience while Omniweb stays the company behind the platform.</p>
+          <p className="mt-3 text-sm leading-7 text-slate-300">Position Omniweb as the product experience across merchants, assistants, and storefront conversations.</p>
         </Card>
       </section>
       <Suspense fallback={null}>

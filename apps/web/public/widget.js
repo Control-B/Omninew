@@ -1,15 +1,15 @@
 (() => {
-  const config = window.OmniNewWidget || {};
+  const config = window.OmniwebWidget || {};
   const appUrl = (config.appUrl || window.location.origin || "").replace(/\/$/, "");
   const widgetKey = encodeURIComponent(config.widgetKey || "");
 
-  const existing = document.getElementById("omninew-widget-frame");
+  const existing = document.getElementById("omniweb-widget-frame");
   if (existing || !appUrl) {
     return;
   }
 
   const iframe = document.createElement("iframe");
-  iframe.id = "omninew-widget-frame";
+  iframe.id = "omniweb-widget-frame";
   iframe.title = "Omniweb AI Assistant";
   iframe.src = `${appUrl}/embed/widget?widgetKey=${widgetKey}`;
   iframe.style.position = "fixed";

@@ -7,29 +7,27 @@ This project is designed for:
 
 ## 1. GitHub repository
 
-This workspace is ready to push to a GitHub repo named `Omninew`.
+This workspace is ready to push to a GitHub repo named `Omniweb`.
 
 If `gh` is authenticated on your machine, run:
 
 ```bash
-cd /root/OmniNew
 gh auth login
 git init
 git branch -M main
 git add .
 git commit -m "Initial Omniweb MVP scaffold"
-gh repo create Omninew --private --source=. --remote=origin --push
+gh repo create Omniweb --private --source=. --remote=origin --push
 ```
 
 If you prefer manual GitHub creation:
 
 ```bash
-cd /root/OmniNew
 git init
 git branch -M main
 git add .
 git commit -m "Initial Omniweb MVP scaffold"
-git remote add origin git@github.com:YOUR_GITHUB_USERNAME/Omninew.git
+git remote add origin git@github.com:YOUR_GITHUB_USERNAME/Omniweb.git
 git push -u origin main
 ```
 
@@ -54,7 +52,7 @@ You can either:
 - create two separate App Platform apps and split the spec manually
 
 Before deploy, replace these placeholders in `.do/app-platform.yaml`:
-- `YOUR_GITHUB_USERNAME/Omninew`
+- `YOUR_GITHUB_USERNAME/Omniweb`
 - `${APP_URL}`
 - `${API_URL}`
 - `${SUPABASE_URL}`
@@ -104,7 +102,7 @@ Then give merchants this snippet:
 
 ```html
 <script>
-  window.OmniNewWidget = {
+  window.OmniwebWidget = {
     appUrl: "https://YOUR_WEB_DOMAIN",
     apiBaseUrl: "https://YOUR_API_DOMAIN/api/v1",
     tenantId: "YOUR_TENANT_ID",

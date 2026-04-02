@@ -1,5 +1,5 @@
 export const embedSnippet = `<script>
-  window.OmniNewWidget = {
+  window.OmniwebWidget = {
     appUrl: "https://YOUR_WEB_DOMAIN",
     widgetKey: "YOUR_PUBLIC_WIDGET_KEY"
   };

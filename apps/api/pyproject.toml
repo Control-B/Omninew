@@ -1,5 +1,5 @@
 [project]
-name = "omninew-shopify-ai-api"
+name = "omniweb-shopify-ai-api"
 version = "0.1.0"
 description = "FastAPI backend for the Omniweb Shopify AI assistant MVP"
 requires-python = ">=3.11"

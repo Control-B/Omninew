@@ -182,7 +182,7 @@ wheels = [
 ]
 
 [[package]]
-name = "omninew-shopify-ai-api"
+name = "omniweb-shopify-ai-api"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

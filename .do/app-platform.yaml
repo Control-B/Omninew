@@ -1,4 +1,4 @@
-name: omninew
+name: omniweb
 region: nyc
 services:
   - name: web

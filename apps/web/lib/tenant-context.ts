@@ -1,6 +1,6 @@
 import type { MerchantContext } from "@/lib/types";
 
-const STORAGE_KEY = "omninew.merchant-context";
+const STORAGE_KEY = "omniweb.merchant-context";
 
 export function getMerchantContext(): MerchantContext | null {
   if (typeof window === "undefined") {

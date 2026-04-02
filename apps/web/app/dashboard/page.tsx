@@ -19,7 +19,7 @@ export default function DashboardOverviewPage() {
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Overview</div>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">OmniNew dashboard</h1>
+            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">Omniweb dashboard</h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
               Omniweb gives each merchant a clean operations view for conversations, buyer intent, sync health, and assistant performance.
             </p>

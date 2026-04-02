@@ -1,4 +1,4 @@
-# Omninew
+# Omniweb
 
 Multi-tenant Shopify AI assistant built with a `Next.js` frontend in `apps/web` and a `FastAPI` backend in `apps/api`.
 
@@ -43,9 +43,9 @@ Multi-tenant Shopify AI assistant built with a `Next.js` frontend in `apps/web` 
 ## Quick Validation
 
 ```bash
-cd /root/OmniNew/apps/api
+cd apps/api
 uv run pytest -q
 
-cd /root/OmniNew/apps/web
+cd ../web
 npm run build
 ```

@@ -5,7 +5,7 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OmniNew by Omniweb",
+  title: "Omniweb",
   description: "Shopify AI sales and support assistant — by Omniweb.",
 };
 
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
                 <div className="flex items-baseline gap-2">
                   <span className="text-sm font-semibold text-white">Omniweb</span>
                   <span className="text-xs text-slate-500">/</span>
-                  <span className="text-sm font-medium text-slate-300">OmniNew</span>
+                  <span className="text-sm font-medium text-slate-300">Omniweb</span>
                 </div>
               </Link>
               <nav className="hidden items-center gap-1 md:flex">

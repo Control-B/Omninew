@@ -27,7 +27,7 @@ export function ConnectStoreForm() {
   const [error, setError] = useState<string>("");
 
   const embedSnippet = merchantContext
-    ? `<script>\n  window.OmniNewWidget = {\n    appUrl: "${typeof window !== "undefined" ? window.location.origin : "https://your-app.example.com"}",\n    widgetKey: "${merchantContext.widgetKey}"\n  };\n</script>\n<script src="${typeof window !== "undefined" ? window.location.origin : "https://your-app.example.com"}/widget.js" async></script>`
+    ? `<script>\n  window.OmniwebWidget = {\n    appUrl: "${typeof window !== "undefined" ? window.location.origin : "https://your-app.example.com"}",\n    widgetKey: "${merchantContext.widgetKey}"\n  };\n</script>\n<script src="${typeof window !== "undefined" ? window.location.origin : "https://your-app.example.com"}/widget.js" async></script>`
     : "";
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {

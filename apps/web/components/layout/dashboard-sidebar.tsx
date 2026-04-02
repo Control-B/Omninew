@@ -33,7 +33,7 @@ export function DashboardSidebar() {
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-slate-500">Omniweb</div>
-            <h2 className="mt-2 text-xl font-semibold text-white">OmniNew</h2>
+            <h2 className="mt-2 text-xl font-semibold text-white">Omniweb</h2>
           </div>
           <Badge className="bg-success/15 text-green-200">Starter</Badge>
         </div>
