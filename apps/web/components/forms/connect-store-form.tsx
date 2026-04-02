@@ -13,7 +13,7 @@ import type { MerchantContext } from "@/lib/types";
 export function ConnectStoreForm() {
   const [businessName, setBusinessName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-  const [assistantName, setAssistantName] = useState("OmniNew assistant");
+  const [assistantName, setAssistantName] = useState("Omniweb assistant");
   const [shopDomain, setShopDomain] = useState("");
   const [adminToken, setAdminToken] = useState("");
   const [storefrontToken, setStorefrontToken] = useState("");
@@ -94,7 +94,7 @@ export function ConnectStoreForm() {
       <div className="mb-6 rounded-2xl border border-indigo-400/20 bg-indigo-500/10 p-4 text-sm text-slate-200">
         <div className="font-medium text-white">Recommended: Shopify OAuth install</div>
         <p className="mt-2 text-slate-300">
-          OAuth is the production SaaS path. It installs OmniNew on the merchant store, exchanges the admin token securely, provisions the tenant, and redirects back here with a widget key.
+          OAuth is the production SaaS path. It installs Omniweb on the merchant store, exchanges the admin token securely, provisions the tenant, and redirects back here with a widget key.
         </p>
       </div>
       <form className="space-y-4" onSubmit={onSubmit}>

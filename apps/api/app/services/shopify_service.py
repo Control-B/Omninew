@@ -54,7 +54,7 @@ class ShopifyService:
         self,
         shop_domain: str,
         admin_access_token: str,
-        title: str = "OmniNew Storefront Token",
+        title: str = "Omniweb Storefront Token",
     ) -> str | None:
         payload = {
             "query": """

@@ -588,7 +588,7 @@ class TenantService:
             id=UUID(row["id"]) if row.get("id") else None,
             tenant_id=UUID(row["tenant_id"]),
             store_id=UUID(row["store_id"]) if row.get("store_id") else None,
-            assistant_name=config.get("assistant_name", "OmniNew assistant"),
+            assistant_name=config.get("assistant_name", "Omniweb assistant"),
             tone=row.get("tone", "balanced"),
             system_prompt=row.get("system_prompt"),
             welcome_message=config.get(
@@ -608,7 +608,7 @@ class TenantService:
         return AssistantConfigResponse(
             tenant_id=tenant_id,
             store_id=store_id,
-            assistant_name="OmniNew assistant",
+            assistant_name="Omniweb assistant",
             tone="balanced",
             system_prompt=None,
             welcome_message="Hi! I can recommend products, answer policy questions, and help capture leads for premium items.",

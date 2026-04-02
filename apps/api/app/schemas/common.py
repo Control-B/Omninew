@@ -127,7 +127,7 @@ class VoiceTokenResponse(BaseModel):
 
 
 class AssistantConfigPayload(BaseModel):
-    assistant_name: str = "OmniNew assistant"
+    assistant_name: str = "Omniweb assistant"
     tone: Literal["sales", "balanced", "support"] = "balanced"
     system_prompt: str | None = None
     welcome_message: str = "Hi! I can recommend products, answer policy questions, and help capture leads for premium items."
@@ -167,7 +167,7 @@ class TenantBootstrapRequest(BaseModel):
     shop_domain: str
     admin_access_token: str
     storefront_access_token: str | None = None
-    assistant_name: str = "OmniNew assistant"
+    assistant_name: str = "Omniweb assistant"
     tone: Literal["sales", "balanced", "support"] = "balanced"
     welcome_message: str = "Hi! I can recommend products, answer policy questions, and help capture leads for premium items."
     voice_enabled: bool = True

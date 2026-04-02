@@ -10,7 +10,7 @@
 
   const iframe = document.createElement("iframe");
   iframe.id = "omninew-widget-frame";
-  iframe.title = "OmniNew AI Assistant";
+  iframe.title = "Omniweb AI Assistant";
   iframe.src = `${appUrl}/embed/widget?widgetKey=${widgetKey}`;
   iframe.style.position = "fixed";
   iframe.style.right = "0";

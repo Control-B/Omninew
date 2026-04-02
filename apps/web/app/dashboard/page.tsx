@@ -55,7 +55,7 @@ export default function DashboardOverviewPage() {
           </div>
           <div className="mt-5 space-y-3 text-sm text-slate-300">
             <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">Product sync refreshed inventory and policy data for the latest connected store.</div>
-            <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">OmniNew prompt behavior was tuned for stronger bundle recommendations and cleaner support handoff.</div>
+            <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">Omniweb prompt behavior was tuned for stronger bundle recommendations and cleaner support handoff.</div>
             <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">Voice controls are available in the widget shell for future cloud voice and telephony expansion.</div>
           </div>
         </Card>

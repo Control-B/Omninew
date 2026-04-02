@@ -13,8 +13,8 @@ const featureCards = [
     icon: ShoppingBag,
   },
   {
-    title: "OmniNew AI engine",
-    body: "Every customer message is routed through OmniNew's AI engine for accurate product recommendations and contextual support answers.",
+    title: "Omniweb AI engine",
+    body: "Every customer message is routed through Omniweb's AI engine for accurate product recommendations and contextual support answers.",
     icon: Bot,
   },
   {

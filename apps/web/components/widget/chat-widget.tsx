@@ -166,7 +166,7 @@ export function ChatWidget() {
           <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-4">
             <div>
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Sparkles className="h-4 w-4 text-accent2" /> {widgetConfig?.assistant_name ?? "OmniNew assistant"}
+                <Sparkles className="h-4 w-4 text-accent2" /> {widgetConfig?.assistant_name ?? "Omniweb assistant"}
               </div>
               <div className="text-xs text-slate-400">{widgetConfig?.store_name ?? "Shopify sales + support widget"}</div>
             </div>

@@ -13,7 +13,7 @@ export default function ConnectPage() {
       </div>
       <ConnectStoreForm />
       <Card className="text-sm leading-7 text-slate-300">
-        Once connected, OmniNew can sync products and policies, serve text and voice sessions from the shared platform, register uninstall webhooks, and keep tenant data isolated by store.
+        Once connected, Omniweb can sync products and policies, serve text and voice sessions from the shared platform, register uninstall webhooks, and keep tenant data isolated by store.
       </Card>
     </div>
   );

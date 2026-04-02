@@ -1,7 +1,7 @@
 [project]
 name = "omninew-shopify-ai-api"
 version = "0.1.0"
-description = "FastAPI backend for the OmniNew Shopify AI assistant MVP"
+description = "FastAPI backend for the Omniweb Shopify AI assistant MVP"
 requires-python = ">=3.11"
 dependencies = [
   "email-validator==2.2.0",

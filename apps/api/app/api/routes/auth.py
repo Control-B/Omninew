@@ -32,7 +32,7 @@ async def install_shopify_app(
     shop: str = Query(..., alias="shop"),
     business_name: str = Query(..., min_length=2),
     owner_email: str = Query(...),
-    assistant_name: str = Query("OmniNew assistant"),
+    assistant_name: str = Query("Omniweb assistant"),
     tone: str = Query("balanced"),
     welcome_message: str = Query("Hi! I can recommend products, answer policy questions, and help capture leads for premium items."),
     voice_enabled: bool = Query(True),

@@ -21,7 +21,7 @@ export function AssistantConfigForm() {
   const [merchantInstructions, setMerchantInstructions] = useState(
     "Focus on high-converting bundles, mention shipping policy when asked, and collect email for premium product inquiries.",
   );
-  const [assistantName, setAssistantName] = useState("OmniNew assistant");
+  const [assistantName, setAssistantName] = useState("Omniweb assistant");
   const [welcomeMessage, setWelcomeMessage] = useState(
     "Hi! I can recommend products, answer policy questions, and help capture leads for premium items.",
   );

@@ -13,12 +13,12 @@ class FakeShopifyAuthService:
     def get_setup_status(self):
         return ShopifySetupStatusResponse(
             status="ready",
-            app_url="https://omninew.example.com",
-            api_public_url="https://omninew.example.com/backend",
-            dashboard_connect_url="https://omninew.example.com/dashboard/connect",
-            install_url="https://omninew.example.com/backend/api/v1/auth/shopify/install",
-            callback_url="https://omninew.example.com/backend/api/v1/auth/shopify/callback",
-            uninstall_webhook_url="https://omninew.example.com/backend/api/v1/webhooks/shopify/app-uninstalled",
+            app_url="https://omniweb.example.com",
+            api_public_url="https://omniweb.example.com/backend",
+            dashboard_connect_url="https://omniweb.example.com/dashboard/connect",
+            install_url="https://omniweb.example.com/backend/api/v1/auth/shopify/install",
+            callback_url="https://omniweb.example.com/backend/api/v1/auth/shopify/callback",
+            uninstall_webhook_url="https://omniweb.example.com/backend/api/v1/webhooks/shopify/app-uninstalled",
             scopes=["read_products", "write_content"],
             app_key_configured=True,
             app_secret_configured=True,

@@ -82,7 +82,7 @@ class FakeBillingService:
         )
 
     async def complete_shopify_checkout(self, query_params):
-        return "https://omninew.example.com/dashboard/connect?billing=success&planCode=growth"
+        return "https://omniweb.example.com/dashboard/connect?billing=success&planCode=growth"
 
 
 def test_billing_plans_route() -> None:

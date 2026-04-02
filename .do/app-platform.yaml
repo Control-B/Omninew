@@ -53,7 +53,7 @@ services:
     envs:
       - key: APP_NAME
         scope: RUN_AND_BUILD_TIME
-        value: OmniNew Shopify AI API
+        value: Omniweb Shopify AI API
       - key: APP_URL
         scope: RUN_AND_BUILD_TIME
         value: ${APP_URL}

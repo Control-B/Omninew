@@ -7,7 +7,7 @@ from app.schemas.common import AgentBlueprintResponse, AgentBlueprintRoute
 DO_AGENT_MODEL = "openai/gpt-oss-120b"
 
 
-DO_AGENT_SYSTEM_PROMPT = """You are OmniNew, a Shopify storefront AI sales and support assistant.
+DO_AGENT_SYSTEM_PROMPT = """You are Omniweb, a Shopify storefront AI sales and support assistant.
 
 Your primary job is to help shoppers discover products, answer store-policy questions accurately, and capture qualified leads when the shopper shows strong purchase intent.
 
@@ -104,9 +104,9 @@ def build_agent_blueprint() -> AgentBlueprintResponse:
 
     return AgentBlueprintResponse(
         model=DO_AGENT_MODEL,
-        workspace_strategy="Create one shared DigitalOcean AI agent for OmniNew and inject tenant/store context at runtime instead of creating one agent per merchant or shopper.",
+        workspace_strategy="Create one shared DigitalOcean AI agent for Omniweb and inject tenant/store context at runtime instead of creating one agent per merchant or shopper.",
         knowledge_base_strategy=[
-            "For the first secure version, leave DigitalOcean Knowledge Bases empty and use synced Shopify data from OmniNew as the source of truth.",
+            "For the first secure version, leave DigitalOcean Knowledge Bases empty and use synced Shopify data from Omniweb as the source of truth.",
             "Use Shopify-synced products and policies from the app database as the primary knowledge source.",
             "Avoid one separate DigitalOcean knowledge base per merchant for the initial version.",
             "Add merchant-specific documents later only for high-value tenants that need dedicated knowledge isolation.",
@@ -129,7 +129,7 @@ def build_agent_blueprint() -> AgentBlueprintResponse:
         ],
         notes=[
             "Preferred model is set to openai/gpt-oss-120b.",
-            "Keep one shared base agent and store per-tenant overrides in OmniNew, not in separate DO agents initially.",
+            "Keep one shared base agent and store per-tenant overrides in Omniweb, not in separate DO agents initially.",
             "Leave Agent Routes empty unless you later create specialist sub-agents such as returns-only or sales-only agents.",
             "Leave Knowledge Bases empty initially unless you need uploaded PDFs or merchant documents outside the synced Shopify catalog/policies.",
             "Use the route secret only in DigitalOcean dashboard function-route configuration, never in the browser.",

@@ -1,6 +1,6 @@
 # DigitalOcean AI Agent Setup
 
-This project is designed to use **one shared DigitalOcean AI agent** for all merchants, with tenant-specific context injected from `OmniNew` at runtime.
+This project is designed to use **one shared DigitalOcean AI agent** for all merchants, with tenant-specific context injected from `Omniweb` at runtime.
 
 ## Recommended model
 
@@ -31,7 +31,7 @@ This project is designed to use **one shared DigitalOcean AI agent** for all mer
 ### Knowledge Bases
 
 - **For now**: leave this empty.
-- **Why**: the first secure version should use synced Shopify products and policies from `OmniNew` as the source of truth.
+- **Why**: the first secure version should use synced Shopify products and policies from `Omniweb` as the source of truth.
 - **Add one later only if**: you want to upload extra merchant documents like shipping SOPs, sizing PDFs, warranty docs, or sales scripts.
 
 ### Guardrails
@@ -79,5 +79,5 @@ Each route must include:
 
 - Do not expose `DO_AGENT_ROUTE_SECRET` in the browser.
 - Keep all function routes server-to-server only.
-- The widget should continue calling `OmniNew` backend, not DO function routes directly.
+- The widget should continue calling `Omniweb` backend, not DO function routes directly.
 - Keep `DO_AI_AGENT_ID` shared by default; only use per-tenant `do_agent_id` where isolation is required.

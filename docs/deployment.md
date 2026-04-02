@@ -17,7 +17,7 @@ gh auth login
 git init
 git branch -M main
 git add .
-git commit -m "Initial OmniNew MVP scaffold"
+git commit -m "Initial Omniweb MVP scaffold"
 gh repo create Omninew --private --source=. --remote=origin --push
 ```
 
@@ -28,7 +28,7 @@ cd /root/OmniNew
 git init
 git branch -M main
 git add .
-git commit -m "Initial OmniNew MVP scaffold"
+git commit -m "Initial Omniweb MVP scaffold"
 git remote add origin git@github.com:YOUR_GITHUB_USERNAME/Omninew.git
 git push -u origin main
 ```
